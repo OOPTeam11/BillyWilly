@@ -1,3 +1,4 @@
+#include "virtualLego.cpp"
 /*
 
 Class : Game
@@ -88,7 +89,7 @@ public:
 	/**
 	@desc : 플레이어의 턴이 종료되었을 때 호출되어야하는 함수
 	*/
-	void onTurnEnd();
+	void onTurnEnd(CSphere& currentBall);
 
 private:
 
