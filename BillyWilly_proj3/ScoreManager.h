@@ -30,7 +30,11 @@ public:
 	
 
 private:
-	ScoreManager() {}
+	ScoreManager() {
+		for (int i = 0; i < sizeof(rankData)/sizeof(*rankData); i++){
+			rankData[i] = vector<Rank>();
+		}
+	}
 	~ScoreManager() {}
 	static ScoreManager* instance;
 	vector<Rank> rankData[2];
