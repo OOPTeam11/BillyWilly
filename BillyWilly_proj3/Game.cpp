@@ -25,6 +25,7 @@ void Game::init(){
 // ===========================================================
 //                     게임 모드 관련 함수
 // ===========================================================
+
 void Game::setMode(int Mode){
 	this->GameMode = Mode;
 }
@@ -36,6 +37,7 @@ int Game::getMode(){
 // ===========================================================
 //                        차례 관련 함수
 // ===========================================================
+
 bool Game::setTurn(int Player){
 	if (this->GameMode == MODE_1 || this->GameMode == MODE_2 || this->GameMode == MODE_PRACTICE){ // if one person mode
 		if (Player == PLAYER1){
@@ -76,6 +78,7 @@ int Game::getTurn(){
 // ===========================================================
 //                     플레이어 점수 관련 
 // ===========================================================
+
 int Game::getPlayerScore(int Player){
 	if (Player != PLAYER1 && Player != PLAYER2){
 		return -1;
@@ -132,6 +135,15 @@ void Game::setPlayerTime(int Player, int Time){
 // ===========================================================
 //                     이벤트 관련 
 // ===========================================================
+
+void Game::onGameStart(){
+
+	// 시간 측정 시작
+	if (this->getMode() == MODE_1){
+		this->StartTime = clock();
+	}
+}
+
 void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4]){
 	
 	//
