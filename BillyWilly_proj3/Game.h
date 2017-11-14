@@ -1,4 +1,4 @@
-#include "virtualLego.cpp"
+
 /*
 
 Class : Game
@@ -22,6 +22,8 @@ Work : 게임 데이터가 담겨있는 클래스
 
 #define PLAYER1 0
 #define PLAYER2 1
+
+class CSphere;
 
 class Game {
 public:
@@ -78,6 +80,7 @@ public:
 	@desc : Player 의 점수를 Score 로 설정하는 함수
 	*/
 	void setPlayerScore(int Player, int Score);
+	void addPlayerScore(int Player, int Score);
 
 	int getPlayerTime(int Player);
 	void addPlayerTime(int Player, int Time);
@@ -88,8 +91,13 @@ public:
 	// ===========================================================
 	/**
 	@desc : 플레이어의 턴이 종료되었을 때 호출되어야하는 함수
+	        빨강공 index : 0, 1
+			노랑공 index : 2
+			하얀공 index : 3
+	@args : currentBallIndex - 턴이 종료되기 전에 조종한 공의 index
+	        CollidedBalls - hasCollided 값을 가져옴
 	*/
-	void onTurnEnd(CSphere& currentBall);
+	void onTurnEnd(int currentBallIndex, bool hasCollided[4]);
 
 private:
 

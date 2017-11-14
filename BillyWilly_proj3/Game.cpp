@@ -93,6 +93,16 @@ void Game::setPlayerScore(int Player, int Score){
 	}
 }
 
+void Game::addPlayerScore(int Player, int Score){
+	if (Player != PLAYER1 && Player != PLAYER2){
+		return;
+	}
+	else {
+		this->GameScore[Player] += Score;
+	}
+}
+
+
 int Game::getPlayerTime(int Player){
 	if (Player != PLAYER1 && Player != PLAYER2){
 		return -1;
@@ -121,6 +131,47 @@ void Game::setPlayerTime(int Player, int Time){
 // ===========================================================
 //                     이벤트 관련 
 // ===========================================================
-void Game::onTurnEnd(){
+void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4]){
 	
+	//
+	// 점수 관리
+	// 
+	if (this->getTurn() == PLAYER1){ // Player1 차례가 끝났을 경우 (하얀공)
+		if (hasCollided[2] == true){ // Player2 (노란공) 을 쳤을 경우
+			this->addPlayerScore(PLAYER1, -10); // 10점을 감점한다.
+		}
+		else { // 상대방을 치지 않았을 경우
+
+			if (hasCollided[0] == true && hasCollided[1] == true){ // 빨간공을 다 쳤을 경우
+				this->addPlayerScore(PLAYER1, 10); // 10첨 추가
+			}
+			else if (hasCollided[0] == false && hasCollided[1] == false){ // 두 공다 치지 못했을 경우
+				this->addPlayerScore(PLAYER1, -10);
+			}
+			else {} // 아무것도 하지 않는다.
+
+		}
+	}
+	else { // Player2 차례가 끝났을 경우 (노란공)
+		if (hasCollided[2] == true){ // Player1 (하얀공) 을 쳤을 경우
+			this->addPlayerScore(PLAYER2, -10); // 10점을 감점한다.
+		}
+		else {  // 상대방을 치지 않았을 경우
+
+			if (hasCollided[0] == true && hasCollided[1] == true){ // 빨간공을 다 쳤을 경우
+				this->addPlayerScore(PLAYER2, 10); // 10첨 추가
+			}
+			else if (hasCollided[0] == false && hasCollided[1] == false){ // 두 공다 치지 못했을 경우
+				this->addPlayerScore(PLAYER2, -10); // 10점 추가
+			}
+			else {} // 아무것도 하지 않는다.
+
+		}
+	}
+
+	//
+	// 시간 관리
+	//
+
+
 }

@@ -132,10 +132,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="d3dUtility.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="virtualLego.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dUtility.h" />
+    <ClInclude Include="Game.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
