@@ -19,6 +19,7 @@ void Game::init(){
 	GameScore[PLAYER2] = 0;
 	GameTime[PLAYER1] = 0;
 	GameTime[PLAYER2] = 0;
+	StartTime = 0;
 }
 
 // ===========================================================
@@ -171,7 +172,11 @@ void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4]){
 
 	//
 	// 시간 관리
-	//
-
-
+	// virtualLego.cpp 에 추가할 필요가 있음.
+	if (this->getMode() == MODE_1){
+		clock_t current = clock();
+		if ((current - this->StartTime)/CLOCKS_PER_SEC > MAX_TIME){
+			// Game End
+		}
+	}
 }

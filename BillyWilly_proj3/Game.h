@@ -1,4 +1,3 @@
-
 /*
 
 Class : Game
@@ -12,6 +11,8 @@ Work : 게임 데이터가 담겨있는 클래스
 
 */
 
+#include <time.h>
+
 #define MAX_TIME 180
 #define MAX_SCORE 1000
 
@@ -22,8 +23,6 @@ Work : 게임 데이터가 담겨있는 클래스
 
 #define PLAYER1 0
 #define PLAYER2 1
-
-class CSphere;
 
 class Game {
 public:
@@ -109,7 +108,7 @@ private:
 	int GameScore[2];
 	// Player1,2 의 게임 경과 시간
 	int GameTime[2];
-
+	clock_t StartTime;
 	int MaxTime = MAX_TIME;
 	int MaxScore = MAX_SCORE;
 };
