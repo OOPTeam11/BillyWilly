@@ -4,11 +4,13 @@ using namespace std;
 
 class Rank{
 public:
+
 	Rank(string name, int mode, int score){
 		this->name = name;
 		this->mode = mode;
 		this->score = score;
 	};
+
 	string name;
 	int mode;
 	int score;
