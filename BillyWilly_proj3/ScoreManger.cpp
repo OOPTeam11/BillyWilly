@@ -64,17 +64,32 @@ bool ScoreManager::loadRank(){
 }
 
 int ScoreManager::addRank(string name, int mode, int score){
+	// TODO: 중복 문제 해결
 	Rank rank(name, mode, score);
 	if (mode == MODE_1){
 		int index = 0;
-		for (Rank* i = rankData[MODE_1].begin; i < rankData[MODE_2].end; i++){
+		for (Rank* i = rankData[mode].begin; i < rankData[mode].end; i++){
 			if (i->score < score){
-				rankData[MODE_1].insert(index, rank);
+				vector<Rank>::iterator it;
+				it = rankData[mode].begin();
+				rankData[mode].insert(it + index, rank);
 				break;
 			}
 		}
 	}
 	else if (mode == MODE_2){
-
+		int index = 0;
+		for (Rank* i = rankData[mode].begin; i < rankData[mode].end; i++){
+			if (i->score > score){
+				vector<Rank>::iterator it;
+				it = rankData[mode].begin();
+				rankData[mode].insert(it + index, rank);
+				break;
+			}
+		}
 	}
+}
+
+vector<Rank>& ScoreManager::getRankData(int mode){
+	return rankData[mode];
 }
