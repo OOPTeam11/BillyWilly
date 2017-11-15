@@ -9,6 +9,7 @@
 // Desc: Provides utility functions for simplifying common tasks.
 //          
 //////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma once
 
 #ifndef __d3dUtilityH__
 #define __d3dUtilityH__
