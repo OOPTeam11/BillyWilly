@@ -17,7 +17,7 @@
 #include <cstdio>
 #include <cassert>
 
-#include<Windows.h>                        // 소리 재생을 위한 헤더파일
+#include<Windows.h>                        // 소리 재생을 위한 헤더파일 !
 #include<MMSystem.h>
 #pragma comment(lib,"Winmm.lib")
 #include <iostream>
@@ -58,6 +58,7 @@ private:
 	float					m_velocity_z;
 	int						index;
 	bool					hasCollided[4];				//다음 공을 치기 전까지 다른 공들과 부딪혔는지 여부를 알려줌
+	int hit_count;                              // 공을 쳤는지 판단하기 위해 추가한 변수 !
 
 
 public:
@@ -111,9 +112,10 @@ public:
 	bool hasIntersected(CSphere& ball)
 	{
 		D3DXVECTOR3 position = ball.getCenter();
+		
 		if (pow(abs(center_x - position.x), 2) + pow(abs(center_z - position.z), 2) < pow(1.999999999 * M_RADIUS, 2)) {
 			
-
+			// 추가 !
 			float ball_vx = ball.getVelocity_X();
 			float ball_vz = ball.getVelocity_Z();
 			float ball_v_result = (pow(ball_vx, 2) + pow(ball_vz, 2)) * 100;
@@ -150,6 +152,14 @@ public:
 	void hitBy(CSphere& ball)
 	{
 		if (hasIntersected(ball)) {
+
+			if (this->deductScore(ball))                     // 빡이 난 경우    !
+			{
+				sndPlaySound("c:\\상대방공쳤을때.wav", SND_ASYNC | SND_NOSTOP);
+			}
+
+			this->hit_count++;                                // 충돌했을 경우 추가 !
+
 			D3DXVECTOR2 ballToThis(center_x - ball.center_x, center_z - ball.center_z);		//ball의 중심으로부터 this의 중심까지의 위치벡터
 
 			D3DXVec2Normalize(&ballToThis, &ballToThis);									//단위벡터로 전환
@@ -173,7 +183,9 @@ public:
 			ball.setPower(ball_vector_f.x, ball_vector_f.y);
 	
 		}
+
 	}
+
 
 	void ballUpdate(float timeDiff)
 	{
@@ -249,6 +261,44 @@ public:
 	int getIndex() {
 		return index;
 	}
+
+	bool deductScore(CSphere &ball)                                     // 빡이 났는지 검사하는 함수 !
+	{
+		D3DXVECTOR3 position = ball.getCenter();
+
+		if (this->index == 2)
+		{
+			if (pow(abs(center_x - position.x), 2) + pow(abs(center_z - position.z), 2) < pow(1.999999999 * M_RADIUS, 2) && ball.index == 3)
+			{
+				return true;
+			}
+
+		}
+
+		else if (this->index == 3)
+		{
+			if (pow(abs(center_x - position.x), 2) + pow(abs(center_z - position.z), 2) < pow(1.999999999 * M_RADIUS, 2) && ball.index == 2)
+			{
+				return true;
+			}
+		}
+
+
+		return false;
+	}
+
+	void sethit_count(int num)              // hit_count를 set하는 함수!
+	{
+		this->hit_count = num;
+	}
+
+	int gethit_count()              // hit_count를 get하는 함수!
+	{
+		return (this->hit_count);
+	}
+
+
+
 
 private:
 	D3DXMATRIX              m_mLocal;
@@ -369,6 +419,10 @@ public:
 
 		if (hasIntersected(ball)) {
 			
+			// 추가 !
+
+			
+
 			float ball_vx = ball.getVelocity_X();
 			float ball_vz = ball.getVelocity_Z();
 			float ball_v_result = (pow(ball_vx, 2) + pow(ball_vz, 2)) * 100;
@@ -634,7 +688,7 @@ bool Display(float timeDelta)
 {
 	int i = 0;
 	int j = 0;
-
+	
 
 	if (Device)
 	{
@@ -647,13 +701,19 @@ bool Display(float timeDelta)
 			for (j = 0; j < 4; j++){ g_legowall[i].hitBy(g_sphere[j]); }
 		}
 
-		// check whether any two balls hit together and update the direction of balls
+
+		// check whether any two balls hit together and update the direction of balls              수정~!!!
 		for (i = 0; i < 4; i++){
+
 			for (j = 0; j < 4; j++) {
-				if (i < j)
+				
+				if (i < j){
 					g_sphere[i].hitBy(g_sphere[j]);
+				}
+				
 			}
 		}
+
 
 		// draw plane, walls, and spheres
 		g_legoPlane.draw(Device, g_mWorld);
@@ -671,13 +731,18 @@ bool Display(float timeDelta)
 	return true;
 }
 
-void changeBall() {
+void changeBall() {                                       // 수정 !
+
+
 	if (currentBall == &(g_sphere[3])) {
 		currentBall = &(g_sphere[2]);
 	}
 	else {
 		currentBall = &(g_sphere[3]);
 	}
+
+	currentBall->sethit_count(0);                      // hit_count 초기화 !
+
 }
 
 LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -729,6 +794,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 								   g_sphere[i].setHasCollided(j, false);
 							   }
 						   }
+
 						   break;
 
 					   }
