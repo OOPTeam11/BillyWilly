@@ -136,6 +136,27 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dUtility.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VirtualLego.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\효과음\마이턴.wav" />
+    <Media Include="..\효과음\벽1.WAV" />
+    <Media Include="..\효과음\벽2.WAV" />
+    <Media Include="..\효과음\벽3.WAV" />
+    <Media Include="..\효과음\부딪히는소리1.WAV" />
+    <Media Include="..\효과음\부딪히는소리2.WAV" />
+    <Media Include="..\효과음\부딪히는소리3.WAV" />
+    <Media Include="..\효과음\부딪히는소리4.WAV" />
+    <Media Include="..\효과음\부딪히는소리5.WAV" />
+    <Media Include="..\효과음\빌리윌리.wav" />
+    <Media Include="..\효과음\상대방공쳤을때.wav" />
+    <Media Include="..\효과음\승리.wav" />
+    <Media Include="..\효과음\점수못냈을때.wav" />
+    <Media Include="..\효과음\최고의플레이.wav" />
+    <Media Include="..\효과음\최고의플레이배경음악.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
