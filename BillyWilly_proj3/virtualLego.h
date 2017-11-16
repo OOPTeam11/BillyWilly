@@ -13,7 +13,7 @@ private:
 	float					m_velocity_z;
 	int						index;
 	bool					hasCollided[4];				//다음 공을 치기 전까지 다른 공들과 부딪혔는지 여부를 알려줌
-
+	int hit_count;                              // 공을 쳤는지 판단하기 위해 추가한 변수 !
 
 public:
 	CSphere(void);
@@ -38,12 +38,18 @@ public:
 	void setHasCollided(int idx, bool bln);
 	int getIndex();
 	bool isFinishTurn();
+	bool CSphere::deductScore(CSphere &ball);
+	void CSphere::sethit_count(int num);
+	int CSphere::gethit_count();
+
+
 private:
 	D3DXMATRIX              m_mLocal;
 	D3DMATERIAL9            m_mtrl;
 	ID3DXMesh*              m_pSphereMesh;
 	int getSign(double num);
 	double getSpeed(double X, double Y);
+
 };
 
 class CWall {

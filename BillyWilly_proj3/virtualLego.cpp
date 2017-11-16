@@ -28,6 +28,13 @@ bestPlay *best = new bestPlay();
 #include "ScoreManager.h"
 // mingyu part
 
+#include<Windows.h>                        // 소리 재생을 위한 헤더파일 !
+#include<MMSystem.h>
+#pragma comment(lib,"Winmm.lib")
+#include <iostream>
+#include "resource.h"
+
+int Sound = 0;                                   // 소리 켜져있을 때는 0 !
 
 IDirect3DDevice9* Device = NULL;
 
@@ -132,6 +139,39 @@ bool CSphere::hasIntersected(CSphere& ball)
 {
 	D3DXVECTOR3 position = ball.getCenter();
 	if (pow(abs(center_x - position.x), 2) + pow(abs(center_z - position.z), 2) < pow(1.999999999 * M_RADIUS, 2)) {
+		
+		// 추가 !
+		float ball_vx = ball.getVelocity_X();
+		float ball_vz = ball.getVelocity_Z();
+		float ball_v_result = (pow(ball_vx, 2) + pow(ball_vz, 2)) * 100;
+
+		if (Sound == 0)                             // 소리가 켜져 있을때
+		{
+
+			if (ball_v_result>800) {
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE9), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);						// 부딪히는 소리 재생         // 5단계
+			}
+
+			else if (ball_v_result > 600)
+			{
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE8), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);                   // 부딪히는 소리 재생         // 4단계		
+			}
+			else if (ball_v_result > 400)
+			{
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE7), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);                   // 부딪히는 소리 재생         // 3단계
+			}
+			else if (ball_v_result > 200)
+			{
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE6), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);                // 부딪히는 소리 재생         // 2단계
+			}
+			else
+			{
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE5), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);           // 부딪히는 소리 재생         // 1단계
+			}
+
+		}
+		
+		
 		setHasCollided(ball.getIndex(), true);
 		ball.setHasCollided(this->getIndex(), true);
 
@@ -148,6 +188,15 @@ bool CSphere::hasIntersected(CSphere& ball)
 void CSphere::hitBy(CSphere& ball)
 {
 	if (hasIntersected(ball)) {
+
+		if (this->deductScore(ball) && Sound == 0)                     // 빡이 난 경우    !
+		{
+			PlaySound(MAKEINTRESOURCE(IDR_WAVE11), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
+		}
+
+		this->hit_count++;                                // 충돌했을 경우 추가 !
+
+
 		D3DXVECTOR2 ballToThis(center_x - ball.center_x, center_z - ball.center_z);		//ball의 중심으로부터 this의 중심까지의 위치벡터
 
 		D3DXVec2Normalize(&ballToThis, &ballToThis);									//단위벡터로 전환
@@ -254,6 +303,43 @@ double CSphere::getSpeed(double X, double Y) {
 	return sqrt(pow(X, 2) + pow(Y, 2));
 }
 
+bool CSphere::deductScore(CSphere &ball)                                     // 빡이 났는지 검사하는 함수 !
+{
+	D3DXVECTOR3 position = ball.getCenter();
+
+	if (this->index == 2)
+	{
+		if (pow(abs(center_x - position.x), 2) + pow(abs(center_z - position.z), 2) < pow(1.999999999 * M_RADIUS, 2) && ball.index == 3)
+		{
+			return true;
+		}
+
+	}
+
+	else if (this->index == 3)
+	{
+		if (pow(abs(center_x - position.x), 2) + pow(abs(center_z - position.z), 2) < pow(1.999999999 * M_RADIUS, 2) && ball.index == 2)
+		{
+			return true;
+		}
+	}
+
+
+	return false;
+}
+
+void CSphere::sethit_count(int num)              // hit_count를 set하는 함수!
+{
+	this->hit_count = num;
+}
+
+int CSphere::gethit_count()              // hit_count를 get하는 함수!
+{
+	return (this->hit_count);
+}
+
+
+
 
 
 // -----------------------------------------------------------------------------
@@ -334,6 +420,28 @@ void CWall::hitBy(CSphere& ball)
 		// cusion hit count ++
 		if (ball.getIndex() == currentBall->getIndex()){
 			best->cusionCount.push_back(WALL);
+		}
+		
+		// 추가 !
+
+		float ball_vx = ball.getVelocity_X();
+		float ball_vz = ball.getVelocity_Z();
+		float ball_v_result = (pow(ball_vx, 2) + pow(ball_vz, 2)) * 100;
+
+
+		if (Sound == 0)
+		{
+			if (ball_v_result>800) {
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE4), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);						// 부딪히는 소리 재생         // 3단계
+			}
+			else if (ball_v_result > 400)
+			{
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE3), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);						// 부딪히는 소리 재생         // 2단계
+			}
+			else
+			{
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE2), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);						// 부딪히는 소리 재생         // 1단계
+			}
 		}
 		
 		vx = ball.getVelocity_X();
@@ -637,6 +745,8 @@ void changeBall() {
 	else {
 		currentBall = &(g_sphere[3]);
 	}
+
+	currentBall->sethit_count(0);                      // hit_count 초기화 !
 }
 
 void drawLine(CSphere *currentball, CSphere redball1, CSphere redball2, CSphere yellowball, CSphere whiteball, CSphere blueball){
@@ -660,11 +770,22 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		// 턴 끝날때 호출되는 call back
 		if (everyBallVelocity.isFinishTurn()){
+			
 			// 빨간 공 두개를 맞추고나서 세번째로 벽을 쳤을 경우 제외
 			if (best->threeCushion()) {
+				
+				if (Sound == 0)             // 최고의 플레이 ~!
+				{
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE14), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
+				}
+
 				best->showStartPos(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+				
 				best->showReplay(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+			
 			}
+
+
 			for (int i = 0; i < best->cusionCount.size(); i++) {
 				best->cusionCount[i] = 0;
 			}
@@ -679,7 +800,15 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			game->onTurnEnd(currentBall->getIndex(), hasCollided, isTurnChange);
 			if (isTurnChange == true){
 				changeBall();
+
+				if (currentBall->getIndex() == 3 && Sound == 0)                  // 바뀐 공이 흰색이면 ! 마이턴 ! 1 ~ 4 모드 !
+				{
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE1), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
+				}
+
 			}
+
+		
 		}
 		switch (msg) {
 		case WM_DESTROY:
@@ -825,6 +954,14 @@ int WINAPI WinMain(HINSTANCE hinstance,
 		::MessageBox(0, "Setup() - FAILED", 0, 0);
 		return 0;
 	}
+
+	if(Sound == 0)                        // 빌리 윌리!
+	{
+		PlaySound(MAKEINTRESOURCE(IDR_WAVE10), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
+	}
+		
+
+
 	d3d::EnterMsgLoop(Display);
 
 	Cleanup();

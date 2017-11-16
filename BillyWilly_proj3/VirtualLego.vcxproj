@@ -140,10 +140,31 @@
   <ItemGroup>
     <ClInclude Include="bestPlay.h" />
     <ClInclude Include="d3dUtility.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="virtualLego.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Rank.h" />
     <ClInclude Include="ScoreManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VirtualLego.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\..\BillyWilly-yesol\마이턴.wav" />
+    <Media Include="..\..\BillyWilly-yesol\벽1.WAV" />
+    <Media Include="..\..\BillyWilly-yesol\벽2.WAV" />
+    <Media Include="..\..\BillyWilly-yesol\벽3.WAV" />
+    <Media Include="..\..\BillyWilly-yesol\부딪히는소리1.WAV" />
+    <Media Include="..\..\BillyWilly-yesol\부딪히는소리2.WAV" />
+    <Media Include="..\..\BillyWilly-yesol\부딪히는소리3.WAV" />
+    <Media Include="..\..\BillyWilly-yesol\부딪히는소리4.WAV" />
+    <Media Include="..\..\BillyWilly-yesol\부딪히는소리5.WAV" />
+    <Media Include="..\..\BillyWilly-yesol\빌리윌리.wav" />
+    <Media Include="..\..\BillyWilly-yesol\상대방공쳤을때.wav" />
+    <Media Include="..\..\BillyWilly-yesol\승리.wav" />
+    <Media Include="..\..\BillyWilly-yesol\점수못냈을때.wav" />
+    <Media Include="..\..\BillyWilly-yesol\최고의플레이.wav" />
+    <Media Include="..\..\BillyWilly-yesol\최고의플레이배경음악.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
