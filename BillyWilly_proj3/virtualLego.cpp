@@ -462,9 +462,11 @@ CSphere	g_sphere[4];
 CSphere	g_target_blueball;
 CLight	g_light;
 
-Circle Ball[4];
+Circle Ball[8];
 C3DText intro;
-CText Mode[4];
+C3DText intro2;
+CText Mode[8];
+int sound = 0;
 int State = 0; // 0은 처음시작. 1은 게임중. 2는 게임 엔드
 
 double g_camera_pos[3] = {0.0, 5.0, -8.0};
@@ -545,20 +547,30 @@ bool Setup()
         (float)Width / (float)Height, 1.0f, 100.0f);
 	Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
 	
-	intro.create(Device, 40, 20, 900, "Times New Roman");
+	intro.create(Device, 40, 20, 90, "Times New Roman");
 	intro.Set(Device, "Willy Billy!");
-	intro.setPosition(-2.2, 2.0f, 0);
+	intro.setPosition(-4.5, 2.5f, 0);
+	intro2.create(Device, 40, 20, 90, "Times New Roman");
+	intro2.Set(Device, "Welcome MY GAME!");
+	intro2.setPosition(-3.82, 1.5f, 0);
 
 	Mode[0].Init(Device, 27, 10, 700, "Airal");
 	Mode[1].Init(Device, 27, 10, 700, "Airal");
 	Mode[2].Init(Device, 27, 10, 700, "Airal");
 	Mode[3].Init(Device, 27, 10, 700, "Airal");
+	Mode[4].Init(Device, 27, 10, 700, "Airal");
+	Mode[5].Init(Device, 27, 10, 700, "Airal");
+	Mode[6].Init(Device, 27, 10, 700, "Airal");
+	Mode[7].Init(Device, 27, 10, 700, "Airal");
 
 	Ball[0].InitVB(Device, 180, 450, 60, d3d::RED);
 	Ball[1].InitVB(Device, 380, 450, 60, d3d::RED);
 	Ball[2].InitVB(Device, 580, 450, 60, d3d::RED);
 	Ball[3].InitVB(Device, 780, 450, 60, d3d::RED);
-
+	Ball[4].InitVB(Device, 280, 550, 60, d3d::BLUE);
+	Ball[5].InitVB(Device, 480, 550, 60, d3d::BLUE);
+	Ball[6].InitVB(Device, 680, 550, 60, d3d::BLUE);
+	Ball[7].InitVB(Device, 680, 550, 60, d3d::RED);
 
     // Set render states.
     Device->SetRenderState(D3DRS_LIGHTING, TRUE);
@@ -620,7 +632,7 @@ bool Display(float timeDelta)
 		Device->Present(0, 0, 0, 0);
 		Device->SetTexture( 0, NULL );
 	}
-	else if (State == 0) {
+	else if (State == 0 && sound == 0) {
 		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
 		Device->BeginScene();
 
@@ -641,15 +653,108 @@ bool Display(float timeDelta)
 		Ball[1].Draw(Device);
 		Ball[2].Draw(Device);
 		Ball[3].Draw(Device);
+		Ball[4].Draw(Device);
+		Ball[5].Draw(Device);
+		Ball[6].Draw(Device);
+
 		Mode[0].Print("Mode1", 150, 440, d3d::WHITE);
 		Mode[1].Print("Mode2", 350, 440, d3d::WHITE);
 		Mode[2].Print("Mode3", 550, 440, d3d::WHITE);
 		Mode[3].Print("Mode4", 750, 440, d3d::WHITE);
+		Mode[4].Print("RANKING", 235, 540, d3d::WHITE);
+		Mode[5].Print("HELP", 455, 540, d3d::WHITE);
+		Mode[6].Print("SOUND", 645, 540, d3d::WHITE);
+
 		intro.draw(Device, g_mWorld);
+		intro2.draw(Device, g_mWorld);
 		//Enter2.draw(Device, g_mWorld);
 
 		//State++;
 	}
+
+	else if (State == 0 && sound == 1) {
+		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
+		Device->BeginScene();
+
+
+
+		D3DXVECTOR3 pos(0.0f, 0.0f, -10.0f);
+		D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+		D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+		Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+
+		D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.2,
+			(float)Width / (float)Height, 0.f, 10000.0f);
+		Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+
+		Ball[0].Draw(Device);
+		Ball[1].Draw(Device);
+		Ball[2].Draw(Device);
+		Ball[3].Draw(Device);
+		Ball[4].Draw(Device);
+		Ball[5].Draw(Device);
+		Ball[7].Draw(Device);
+
+		Mode[0].Print("Mode1", 150, 440, d3d::WHITE);
+		Mode[1].Print("Mode2", 350, 440, d3d::WHITE);
+		Mode[2].Print("Mode3", 550, 440, d3d::WHITE);
+		Mode[3].Print("Mode4", 750, 440, d3d::WHITE);
+		Mode[4].Print("RANKING", 235, 540, d3d::WHITE);
+		Mode[5].Print("HELP", 455, 540, d3d::WHITE);
+		Mode[7].Print("MUTE", 650, 540, d3d::WHITE);
+
+		intro.draw(Device, g_mWorld);
+		intro2.draw(Device, g_mWorld);
+		//Enter2.draw(Device, g_mWorld);
+
+		//State++;
+	}
+	
+	else if (State == 3) {
+		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
+		Device->BeginScene();
+
+
+
+		D3DXVECTOR3 pos(0.0f, 0.0f, -10.0f);
+		D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+		D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+		Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+
+		D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.2,
+			(float)Width / (float)Height, 0.f, 10000.0f);
+		Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+
+		//Enter2.draw(Device, g_mWorld);
+
+		//State++;
+	}
+	else if (State == 4) {
+		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
+		Device->BeginScene();
+
+
+
+		D3DXVECTOR3 pos(0.0f, 0.0f, -10.0f);
+		D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+		D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+		Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+
+		D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.2,
+			(float)Width / (float)Height, 0.f, 10000.0f);
+		Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+
+		//Enter2.draw(Device, g_mWorld);
+
+		//State++;
+	}
+
 	Device->EndScene();
 	Device->Present(0, 0, 0, 0);
 	Device->SetTexture(0, NULL);
@@ -777,12 +882,11 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			::DestroyWindow(hwnd);
 			break;
 		case VK_TAB:
-			if (State == 1) // 게임중
-			{
+			
 
 				State = 0;
 
-			}
+			
 			break;
 		
 
@@ -969,6 +1073,63 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					(float)Width / (float)Height, 1.f, 10000.0f);
 				Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
 				State = 1;
+
+			}
+
+			if (pow(new_x - 280, 2) + pow(new_y - 550, 2) <= 3600)
+			{
+				//Mode 4
+				D3DXVECTOR3 pos(0.0f, 7, -8);
+				D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+				D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+				D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+
+				Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+				// Set the projection matrix.
+				D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.5,
+					(float)Width / (float)Height, 1.f, 10000.0f);
+				Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+				State = 3;
+
+			}
+			if (pow(new_x - 480, 2) + pow(new_y - 550, 2) <= 3600)
+			{
+				//Mode 4
+				D3DXVECTOR3 pos(0.0f, 7, -8);
+				D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+				D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+				D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+
+				Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+				// Set the projection matrix.
+				D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.5,
+					(float)Width / (float)Height, 1.f, 10000.0f);
+				Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+				State = 4;
+
+			}
+			if (pow(new_x - 680, 2) + pow(new_y - 550, 2) <= 3600)
+			{
+				//Mode 4
+				D3DXVECTOR3 pos(0.0f, 7, -8);
+				D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+				D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+				D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+
+				Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+				// Set the projection matrix.
+				D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.5,
+					(float)Width / (float)Height, 1.f, 10000.0f);
+				Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+				if (sound == 0) {
+					sound = 1;
+				}
+				else {
+					sound = 0;
+				}
 
 			}
 			break;

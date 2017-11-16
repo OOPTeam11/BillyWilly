@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <SccProjectName />
     <SccLocalPath />
-    <ProjectGuid>{273F1DCB-438B-4815-97BC-9E941FE04B48}</ProjectGuid>
+    <ProjectGuid>{D0CCC8A0-C2BE-4CFA-8957-F1396718837E}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -131,14 +131,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bestPlay.cpp" />
     <ClCompile Include="d3dUtility.cpp" />
     <ClCompile Include="virtualLego.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bestPlay.h" />
+    <ClInclude Include="C3DText.h" />
+    <ClInclude Include="Ctext.h" />
     <ClInclude Include="d3dUtility.h" />
-    <ClInclude Include="virtualLego.h" />
+    <ClInclude Include="Define.h" />
+    <ClInclude Include="Rect.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

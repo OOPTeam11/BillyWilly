@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VirtualLego", "VirtualLego.vcxproj", "{273F1DCB-438B-4815-97BC-9E941FE04B48}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VirtualLego", "VirtualLego.vcxproj", "{D0CCC8A0-C2BE-4CFA-8957-F1396718837E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{273F1DCB-438B-4815-97BC-9E941FE04B48}.Debug|Win32.ActiveCfg = Debug|Win32
-		{273F1DCB-438B-4815-97BC-9E941FE04B48}.Debug|Win32.Build.0 = Debug|Win32
-		{273F1DCB-438B-4815-97BC-9E941FE04B48}.Release|Win32.ActiveCfg = Release|Win32
-		{273F1DCB-438B-4815-97BC-9E941FE04B48}.Release|Win32.Build.0 = Release|Win32
+		{D0CCC8A0-C2BE-4CFA-8957-F1396718837E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D0CCC8A0-C2BE-4CFA-8957-F1396718837E}.Debug|Win32.Build.0 = Debug|Win32
+		{D0CCC8A0-C2BE-4CFA-8957-F1396718837E}.Release|Win32.ActiveCfg = Release|Win32
+		{D0CCC8A0-C2BE-4CFA-8957-F1396718837E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
