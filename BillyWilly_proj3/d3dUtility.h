@@ -130,6 +130,9 @@ namespace d3d
 	//
 	// Constants
 	//
+
+
+	// set get timedelta for Replay
 	float getTimeGap();
 	void setTimeGap(float timeDelta);
 

@@ -7,7 +7,7 @@ bestPlay::bestPlay() {
 }
 
 void bestPlay::saveLastStatus(float timeDelta, CSphere *g_sphere, CWall *g_legowall, CWall g_legoPlane, CSphere g_target_blueball, CLight g_light) {
-	this->timeDelta = timeDelta;
+	this->lastTimeDelta = timeDelta;
 	for (int i = 0; i < 4; i++) {
 		this->last_g_sphere[i] = g_sphere[i];
 		this->last_g_legowall[i] = g_legowall[i];
@@ -18,7 +18,7 @@ void bestPlay::saveLastStatus(float timeDelta, CSphere *g_sphere, CWall *g_legow
 }
 
 void bestPlay::saveCurStatus(float timeDelta, CSphere *g_sphere, CWall *g_legowall, CWall g_legoPlane, CSphere g_target_blueball, CLight g_light) {
-	this->timeDelta = timeDelta; 
+	this->curTimeDelta = timeDelta; 
 	for (int i = 0; i < 4; i++) {
 		this->cur_g_sphere[i] = g_sphere[i];
 		this->cur_g_legowall[i] = g_legowall[i];
@@ -47,7 +47,7 @@ void bestPlay::getCurStatus(CSphere	*g_sphere, CWall *g_legowall, CWall *g_legoP
 	*g_light = this->cur_g_light;
 }
 
-void bestPlay::showStartPos(float timeDelta, IDirect3DDevice9** Device, D3DXMATRIX* g_mWorld, CSphere	*g_sphere, CWall *g_legowall, CWall *g_legoPlane, CSphere *g_target_blueball, CLight *g_light) {
+void bestPlay::showStartPos(IDirect3DDevice9** Device, D3DXMATRIX* g_mWorld, CSphere	*g_sphere, CWall *g_legowall, CWall *g_legoPlane, CSphere *g_target_blueball, CLight *g_light) {
 	for (int i = 0; i < 4; i++) {
 		g_sphere[i] = this->last_g_sphere[i];
 		g_legowall[i] = this->last_g_legowall[i];
@@ -63,7 +63,7 @@ void bestPlay::showStartPos(float timeDelta, IDirect3DDevice9** Device, D3DXMATR
 
 		// update the position of each ball. during update, check whether each ball hit by walls.
 		for (int i = 0; i < 4; i++) {
-			g_sphere[i].ballUpdate(timeDelta);
+			g_sphere[i].ballUpdate(lastTimeDelta);
 			for (int j = 0; j < 4; j++){ g_legowall[i].hitBy(g_sphere[j]); }
 		}
 
@@ -90,7 +90,7 @@ void bestPlay::showStartPos(float timeDelta, IDirect3DDevice9** Device, D3DXMATR
 	}
 }
 
-void bestPlay::showReplay(float timeDelta, IDirect3DDevice9** Device, D3DXMATRIX* g_mWorld, CSphere	*g_sphere, CWall *g_legowall, CWall *g_legoPlane, CSphere *g_target_blueball, CLight *g_light) {
+void bestPlay::showReplay(IDirect3DDevice9** Device, D3DXMATRIX* g_mWorld, CSphere	*g_sphere, CWall *g_legowall, CWall *g_legoPlane, CSphere *g_target_blueball, CLight *g_light) {
 
 	for (int i = 0; i < 4; i++) {
 		g_sphere[i] = this->cur_g_sphere[i];
@@ -107,7 +107,7 @@ void bestPlay::showReplay(float timeDelta, IDirect3DDevice9** Device, D3DXMATRIX
 
 		// update the position of each ball. during update, check whether each ball hit by walls.
 		for (int i = 0; i < 4; i++) {
-			g_sphere[i].ballUpdate(0.001);
+			g_sphere[i].ballUpdate(curTimeDelta);
 			for (int j = 0; j < 4; j++){ g_legowall[i].hitBy(g_sphere[j]); }
 		}
 

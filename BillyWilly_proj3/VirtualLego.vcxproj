@@ -133,12 +133,17 @@
   <ItemGroup>
     <ClCompile Include="bestPlay.cpp" />
     <ClCompile Include="d3dUtility.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="ScoreManger.cpp" />
     <ClCompile Include="virtualLego.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bestPlay.h" />
     <ClInclude Include="d3dUtility.h" />
     <ClInclude Include="virtualLego.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Rank.h" />
+    <ClInclude Include="ScoreManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,6 +13,8 @@
 
 #include "virtualLego.h"
 #include "bestPlay.h"
+#include "d3dUtility.h"
+#include <iostream>
 #include <vector>
 #include <ctime>
 #include <cstdlib>
@@ -21,6 +23,10 @@
 
 // bestPlay instance
 bestPlay *best = new bestPlay();
+// mingyu part
+#include "Game.h"
+#include "ScoreManager.h"
+// mingyu part
 
 
 IDirect3DDevice9* Device = NULL;
@@ -40,7 +46,12 @@ CSphere * currentBall;
 CLight	g_light;
 EveryBallVelocity everyBallVelocity;
 
+// mingyu part
+Game game();
+// mingyu part
+
 bool VK_SPACE_interrupt = false;
+
 
 // There are four balls
 // initialize the position (coordinate) of each ball (ball0 ~ ball3)
@@ -70,6 +81,7 @@ D3DXMATRIX g_mProj;
 // CSphere class definition
 // -----------------------------------------------------------------------------
 
+
 CSphere::CSphere(void)
 {
 	D3DXMatrixIdentity(&m_mLocal);
@@ -80,7 +92,6 @@ CSphere::CSphere(void)
 	m_pSphereMesh = NULL;
 }
 CSphere::~CSphere(void) {}
-
 
 bool CSphere::create(IDirect3DDevice9* pDevice, int index, D3DXCOLOR color = d3d::WHITE)
 {
@@ -245,7 +256,6 @@ double CSphere::getSpeed(double X, double Y) {
 
 
 
-
 // -----------------------------------------------------------------------------
 // CWall class definition
 // -----------------------------------------------------------------------------
@@ -306,7 +316,6 @@ bool CWall::hasIntersected(CSphere& ball)
 		if (abs(position.x - m_x) <= M_RADIUS + 0.06f)
 			return true;
 	}
-
 	return false;
 }
 
@@ -447,7 +456,7 @@ D3DXVECTOR3 CLight::getPosition(void) const { return D3DXVECTOR3(m_lit.Position)
 void EveryBallVelocity::setStatus(CSphere* g_sphere){
 	cur_status = true;
 	for (int i = 0; i < 4; i++){
-		if (g_sphere[i].getVelocity_X() || g_sphere[i].getVelocity_Z()){ // i번째 공이 멈춰있나?
+		if (g_sphere[i].getVelocity_X() >0 || g_sphere[i].getVelocity_Z()>0){ // i번째 공이 멈춰있나?
 			cur_status = false;
 			break;
 		}
@@ -466,8 +475,6 @@ void EveryBallVelocity::setStatus(CSphere* g_sphere){
 bool EveryBallVelocity::isFinishTurn(){
 	return finishTurn;
 }
-
-
 
 double g_camera_pos[3] = { 0.0, 5.0, -8.0 };
 
@@ -537,7 +544,7 @@ bool Setup()
 
 	// Position and aim the camera.
 	D3DXVECTOR3 pos(0.0f, 5.0f, -8.0f);
-	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f); 
 	D3DXVECTOR3 up(0.0f, 2.0f, 0.0f);
 	D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
 	Device->SetTransform(D3DTS_VIEW, &g_mView);
@@ -553,6 +560,13 @@ bool Setup()
 	Device->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 
 	g_light.setLight(Device, g_mWorld);
+
+	// mingyu part
+	if ((ScoreManager::getInstance())->loadRank() == false){
+		return false;
+	}
+	// mingyu part
+
 	return true;
 }
 
@@ -612,8 +626,6 @@ bool Display(float timeDelta)
 		Device->EndScene();
 		Device->Present(0, 0, 0, 0);
 		Device->SetTexture(0, NULL);
-
-
 	}
 	return true;
 }
@@ -626,7 +638,6 @@ void changeBall() {
 		currentBall = &(g_sphere[3]);
 	}
 }
-
 
 void drawLine(CSphere *currentball, CSphere redball1, CSphere redball2, CSphere yellowball, CSphere whiteball, CSphere blueball){
 	if (currentBall->getIndex() == yellowball.getIndex()){
@@ -646,11 +657,13 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		everyBallVelocity.setStatus(g_sphere);
 
+
 		// 턴 끝날때 호출되는 call back
 		if (everyBallVelocity.isFinishTurn()){
 			// 빨간 공 두개를 맞추고나서 세번째로 벽을 쳤을 경우 제외
 			if (best->threeCushion()) {
-				best->showReplay(d3d::getTimeGap(), &Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+				best->showStartPos(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+				best->showReplay(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
 			}
 			for (int i = 0; i < best->cusionCount.size(); i++) {
 				best->cusionCount[i] = 0;
@@ -674,6 +687,12 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 								   Device->SetRenderState(D3DRS_FILLMODE,
 									   (wire ? D3DFILL_WIREFRAME : D3DFILL_SOLID));
 							   }
+							   break;
+						   case VK_F1:
+							   best->showStartPos(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+							   break;
+						   case VK_F2:
+							   best->showReplay(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
 							   break;
 						   case VK_SPACE:
 							   if (everyBallVelocity.isZero()){
@@ -707,8 +726,8 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 									   }
 								   }
 								   // 이동 상태 저장 (Replay 용)
-
 								   best->saveCurStatus(d3d::getTimeGap(), g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
+
 								   break;
 							   }
 							   break;
@@ -777,7 +796,7 @@ int WINAPI WinMain(HINSTANCE hinstance,
 	HINSTANCE prevInstance,
 	PSTR cmdLine,
 	int showCmd)
-{
+{	
 	srand(static_cast<unsigned int>(time(NULL)));
 
 	if (!d3d::InitD3D(hinstance,
