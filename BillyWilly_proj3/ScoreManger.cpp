@@ -47,12 +47,17 @@ bool ScoreManager::loadRank(){
 			Rank rank = parseRank(line);
 			if (rank.mode == -1 && rank.score == -1){
 				// parsing err - line skip
-				return false;
 			}
 			else {
 				rankData[rank.mode].push_back(rank);
 			}
 		}
+		rankFile.close();
+	}
+	else { // 파일이 없을 경우
+		ofstream file("rank.txt");
+		if (file.is_open() == true) file.close(); // 파일 생성.
+		else return false; // 파일 생성 안되므로 return false.
 	}
 
 	// 순위 정렬
