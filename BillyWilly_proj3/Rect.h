@@ -121,9 +121,9 @@ public:
 		}
 
 		line[0] = vertices[1];
-		line[0].color = d3d::RED;
+		//line[0].color = d3d::RED;
 		line[0] = vertices[19];
-		line[1].color = d3d::RED;
+		//line[1].color = d3d::RED;
 		pDevice->SetStreamSource(0, g_pVB, 0, sizeof(CUSTOMVERTEX));
 		pDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 		//pDevice->DrawPrimitiveUP(D3DPT_LINELIST, 1, line, sizeof(CUSTOMVERTEX));

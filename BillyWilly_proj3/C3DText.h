@@ -53,7 +53,7 @@ public:
 	}
 	void Set(IDirect3DDevice9 * pDevice, LPCSTR cSTR)
 	{
-		D3DXCreateText(pDevice, hdc, cSTR, 0.001f, 0.4f, &m_TextMesh, 0, 0);
+		D3DXCreateText(pDevice, hdc, cSTR, 0.002f, 0.4f, &m_TextMesh, 0, 0);
 
 		SelectObject(hdc, hFontOld);
 		DeleteObject(hFont);
