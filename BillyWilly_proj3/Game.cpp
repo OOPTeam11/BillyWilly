@@ -12,6 +12,10 @@ Work : 게임 데이터가 담겨있는 클래스
 
 */
 
+Game::Game(){
+	init();
+}
+
 void Game::init(){
 	GameMode = 0;
 	GameTurn = PLAYER1;

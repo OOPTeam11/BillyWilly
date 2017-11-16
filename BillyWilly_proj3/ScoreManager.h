@@ -1,3 +1,4 @@
+#pragma once
 #include "Rank.h"
 #include "Game.h"
 #include <vector>
@@ -31,11 +32,10 @@ public:
 
 private:
 	ScoreManager() {
-		for (int i = 0; i < sizeof(rankData)/sizeof(*rankData); i++){
-			rankData[i] = vector<Rank>();
-		}
+		rankData[0] = vector<Rank>();
+		rankData[1] = vector<Rank>();
 	}
 	~ScoreManager() {}
-	static ScoreManager* instance;
+	static ScoreManager* ScoreManager::instance;
 	vector<Rank> rankData[2];
 };

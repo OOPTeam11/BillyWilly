@@ -19,8 +19,8 @@
 #include <cassert>
 
 // mingyu part
-//#include "Game.h"
-//#include "ScoreManager.h"
+#include "Game.h"
+#include "ScoreManager.h"
 // mingyu part
 
 
@@ -480,7 +480,7 @@ CSphere * currentBall;
 CLight	g_light;
 
 // mingyu part
-//Game game();
+Game game();
 // mingyu part
 
 double g_camera_pos[3] = { 0.0, 5.0, -8.0 };
@@ -567,6 +567,13 @@ bool Setup()
 	Device->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 
 	g_light.setLight(Device, g_mWorld);
+
+	// mingyu part
+	if ((ScoreManager::getInstance())->loadRank() == false){
+		return false;
+	}
+	// mingyu part
+
 	return true;
 }
 
@@ -749,13 +756,7 @@ int WINAPI WinMain(HINSTANCE hinstance,
 	HINSTANCE prevInstance,
 	PSTR cmdLine,
 	int showCmd)
-{
-	// mingyu part
-	//ScoreManager* scManager = ScoreManager::getInstance();
-	//scManager->loadRank();
-	// mingyu part
-
-
+{	
 	srand(static_cast<unsigned int>(time(NULL)));
 
 	if (!d3d::InitD3D(hinstance,

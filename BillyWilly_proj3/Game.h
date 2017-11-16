@@ -1,3 +1,4 @@
+#pragma once
 /*
 
 Class : Game
@@ -32,7 +33,7 @@ class Game {
 public:
 
 	// constructor
-	Game(){ init(); };
+	Game();
 	// destructor
 	~Game(){};
 

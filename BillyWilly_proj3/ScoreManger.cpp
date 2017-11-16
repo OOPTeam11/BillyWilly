@@ -3,6 +3,8 @@
 
 using namespace std;
 
+ScoreManager* ScoreManager::instance = nullptr;
+
 Rank parseRank(string line){
 	int     nCutPos;
 	int     nIndex = 0;
@@ -71,7 +73,9 @@ int ScoreManager::addRank(string name, int mode, int score){
 				rankData[mode].insert(it + index, rank);
 				break;
 			}
+			index++;
 		}
+		return index;
 	}
 	else if (mode == MODE_2){
 		int index = 0;
@@ -82,7 +86,9 @@ int ScoreManager::addRank(string name, int mode, int score){
 				rankData[mode].insert(it + index, rank);
 				break;
 			}
+			index++;
 		}
+		return index;
 	}
 	return 1;
 }
