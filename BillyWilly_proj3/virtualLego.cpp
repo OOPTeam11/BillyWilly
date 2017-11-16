@@ -18,6 +18,11 @@
 #include <cstdio>
 #include <cassert>
 
+// mingyu part
+#include "Game.h"
+#include "ScoreManager.h"
+// mingyu part
+
 
 IDirect3DDevice9* Device = NULL;
 
@@ -474,6 +479,10 @@ CSphere	g_target_blueball;
 CSphere * currentBall;
 CLight	g_light;
 
+// mingyu part
+Game game();
+// mingyu part
+
 double g_camera_pos[3] = { 0.0, 5.0, -8.0 };
 
 // -----------------------------------------------------------------------------
@@ -741,6 +750,12 @@ int WINAPI WinMain(HINSTANCE hinstance,
 	PSTR cmdLine,
 	int showCmd)
 {
+	// mingyu part
+	ScoreManager* scManager = ScoreManager::getInstance();
+	scManager->loadRank();
+	// mingyu part
+
+
 	srand(static_cast<unsigned int>(time(NULL)));
 
 	if (!d3d::InitD3D(hinstance,
