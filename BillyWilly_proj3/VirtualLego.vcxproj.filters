@@ -2,15 +2,15 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{214e53fa-710f-42db-bf72-491071cf7588}</UniqueIdentifier>
+      <UniqueIdentifier>{9e030588-de97-46de-a569-3b6e7842a532}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{bdaa55ac-5601-4225-b685-64c227963633}</UniqueIdentifier>
+      <UniqueIdentifier>{c998508a-2c2d-4338-a73d-4e499ed6ccf6}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
     <Filter Include="Resource Files">
-      <UniqueIdentifier>{36de0d0f-f839-4649-96c6-27237477caa3}</UniqueIdentifier>
+      <UniqueIdentifier>{dbaff08c-cad2-4387-999b-5ddb9fad0344}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
   </ItemGroup>
@@ -21,24 +21,18 @@
     <ClCompile Include="virtualLego.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="bestPlay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ScoreManger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="bestPlay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dUtility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="virtualLego.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="bestPlay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
@@ -50,7 +44,13 @@
     <ClInclude Include="ScoreManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="virtualLego.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bestPlay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -58,22 +58,5 @@
     <ResourceCompile Include="VirtualLego.rc">
       <Filter>Source Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="..\..\BillyWilly-yesol\마이턴.wav" />
-    <Media Include="..\..\BillyWilly-yesol\벽1.WAV" />
-    <Media Include="..\..\BillyWilly-yesol\벽2.WAV" />
-    <Media Include="..\..\BillyWilly-yesol\벽3.WAV" />
-    <Media Include="..\..\BillyWilly-yesol\부딪히는소리1.WAV" />
-    <Media Include="..\..\BillyWilly-yesol\부딪히는소리2.WAV" />
-    <Media Include="..\..\BillyWilly-yesol\부딪히는소리3.WAV" />
-    <Media Include="..\..\BillyWilly-yesol\부딪히는소리4.WAV" />
-    <Media Include="..\..\BillyWilly-yesol\부딪히는소리5.WAV" />
-    <Media Include="..\..\BillyWilly-yesol\빌리윌리.wav" />
-    <Media Include="..\..\BillyWilly-yesol\상대방공쳤을때.wav" />
-    <Media Include="..\..\BillyWilly-yesol\승리.wav" />
-    <Media Include="..\..\BillyWilly-yesol\점수못냈을때.wav" />
-    <Media Include="..\..\BillyWilly-yesol\최고의플레이.wav" />
-    <Media Include="..\..\BillyWilly-yesol\최고의플레이배경음악.wav" />
   </ItemGroup>
 </Project>
