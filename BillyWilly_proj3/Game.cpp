@@ -7,8 +7,8 @@ Work : 게임 데이터가 담겨있는 클래스
 # 게임모드의 종류
 1. 모드1 : 정해진 시간동안 최대한 많은 점수를 내는 모드(1인용)
 2. 모드2 : 정해진 점수를 가장 빠르게 도달하는 모드(1인용)
-4. 모드3 : 2인용 모드, 2인이서 4구를 제한없이 점수만 내며 즐기는 모드
-3. 연습 모드 : 시간 상관 없이 즐기는 모드. 점수는 매겨진다.(2인용)
+3. 모드3 : 2인용 모드, 2인이서 4구를 제한없이 점수만 내며 즐기는 모드
+4. 연습 모드 : 시간 상관 없이 즐기는 모드. 점수는 매겨진다.(2인용)
 
 */
 
@@ -17,7 +17,7 @@ Game::Game(){
 }
 
 void Game::init(){
-	GameMode = 0;
+	GameMode = 3;
 	GameTurn = PLAYER1;
 	GameScore[PLAYER1] = 0;
 	GameScore[PLAYER2] = 0;
@@ -148,8 +148,10 @@ void Game::onGameStart(){
 	}
 }
 
-void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4]){
+void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChange){
 	
+	// 턴을 바꿀지 말지 결정하는 변수
+	isTurnChange = true;
 	//
 	// 점수 관리
 	// 
@@ -161,6 +163,7 @@ void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4]){
 
 			if (hasCollided[0] == true && hasCollided[1] == true){ // 빨간공을 다 쳤을 경우
 				this->addPlayerScore(PLAYER1, 10); // 10첨 추가
+				isTurnChange = false;
 			}
 			else if (hasCollided[0] == false && hasCollided[1] == false){ // 두 공다 치지 못했을 경우
 				this->addPlayerScore(PLAYER1, -10);
@@ -177,6 +180,7 @@ void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4]){
 
 			if (hasCollided[0] == true && hasCollided[1] == true){ // 빨간공을 다 쳤을 경우
 				this->addPlayerScore(PLAYER2, 10); // 10첨 추가
+				isTurnChange = false;
 			}
 			else if (hasCollided[0] == false && hasCollided[1] == false){ // 두 공다 치지 못했을 경우
 				this->addPlayerScore(PLAYER2, -10); // 10점 추가
@@ -195,4 +199,10 @@ void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4]){
 			// Game End
 		}
 	}
+
+	//
+	// 게임 엔딩 관리
+	// 논의가 필요함.
+	//
+
 }

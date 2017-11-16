@@ -47,7 +47,7 @@ CLight	g_light;
 EveryBallVelocity everyBallVelocity;
 
 // mingyu part
-Game game();
+Game* game = new Game();
 // mingyu part
 
 bool VK_SPACE_interrupt = false;
@@ -456,7 +456,7 @@ D3DXVECTOR3 CLight::getPosition(void) const { return D3DXVECTOR3(m_lit.Position)
 void EveryBallVelocity::setStatus(CSphere* g_sphere){
 	cur_status = true;
 	for (int i = 0; i < 4; i++){
-		if (g_sphere[i].getVelocity_X() >0 || g_sphere[i].getVelocity_Z()>0){ // i번째 공이 멈춰있나?
+		if (g_sphere[i].getVelocity_X() >0.03 || g_sphere[i].getVelocity_Z() > 0.03) { // i번째 공이 멈춰있나?
 			cur_status = false;
 			break;
 		}
@@ -668,6 +668,18 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			for (int i = 0; i < best->cusionCount.size(); i++) {
 				best->cusionCount[i] = 0;
 			}
+
+			// mingyu part
+			// question: isFinishTurn() 이 true 가 되는 시점이 정확히 언제인가?
+			bool isTurnChange = true;
+			bool hasCollided[4];
+			for (int i = 0; i < 4; i++){
+				hasCollided[i] = currentBall->getHasCollided(i);
+			}
+			game->onTurnEnd(currentBall->getIndex(), hasCollided, isTurnChange);
+			if (isTurnChange == true){
+				changeBall();
+			}
 		}
 		switch (msg) {
 		case WM_DESTROY:
@@ -707,7 +719,9 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 								   }
 								   else {
-									   changeBall();
+									   // mingyu 가 지웠어요!
+									   // changeBall();
+									   
 								   }
 								   D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
 								   D3DXVECTOR3	currentpos = currentBall->getCenter();
