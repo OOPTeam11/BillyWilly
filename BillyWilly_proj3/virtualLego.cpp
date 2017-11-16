@@ -776,6 +776,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		// 턴 끝날때 호출되는 call back
 		if (everyBallVelocity.isFinishTurn()){
+
 			//::MessageBox(0, "isFinishTurn", 0, 0);
 			// 빨간 공 두개를 맞추고나서 세번째로 벽을 쳤을 경우 제외
 			if (best->threeCushion()) {
