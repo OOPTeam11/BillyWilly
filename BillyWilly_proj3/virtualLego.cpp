@@ -419,7 +419,15 @@ void CLight::draw(IDirect3DDevice9* pDevice)
 
 D3DXVECTOR3 CLight::getPosition(void) const { return D3DXVECTOR3(m_lit.Position); }
 
-
+void EveryBallVelocity::setStatus(CSphere* g_sphere){
+	status = true;
+	for (int i = 0; i < 4; i++){
+		if (g_sphere[i].getVelocity_X() || g_sphere[i].getVelocity_Z()){
+			status = false;
+			break;
+		}
+	}
+}
 
 // -----------------------------------------------------------------------------
 // Global variables
@@ -430,6 +438,7 @@ CSphere	g_sphere[4];
 CSphere	g_target_blueball;
 CSphere * currentBall;
 CLight	g_light;
+EveryBallVelocity everyBallVelocity;
 
 double g_camera_pos[3] = { 0.0, 5.0, -8.0 };
 
@@ -591,6 +600,8 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	static int old_y = 0;
 	static enum { WORLD_MOVE, LIGHT_MOVE, BLOCK_MOVE } move = WORLD_MOVE;
 
+	everyBallVelocity.setStatus(g_sphere);
+
 	switch (msg) {
 	case WM_DESTROY:
 	{
@@ -619,36 +630,38 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						   best->showReplay(&Device, &g_mWorld);
 						   break;
 					   case VK_SPACE:
-						   // 출발 상태 저장
-						   best->saveLastStatus(g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
-						   
-						   //CSphere * currentBall;
-						   //현재 공이 빨간공 두개만 맞췄을 경우가 아니면 공을 바꾼다
-						   if (currentBall->getHasCollided(0) && currentBall->getHasCollided(1) && !currentBall->getHasCollided(2) && !currentBall->getHasCollided(3)) {
-						   }
-						   else {
-							   changeBall();
-						   }
-						   D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
-						   D3DXVECTOR3	currentpos = currentBall->getCenter();
-						   double theta = acos(sqrt(pow(targetpos.x - currentpos.x, 2)) / sqrt(pow(targetpos.x - currentpos.x, 2) +
-							   pow(targetpos.z - currentpos.z, 2)));		// 기본 1 사분면
-						   if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x >= 0) { theta = -theta; }	//4 사분면
-						   if (targetpos.z - currentpos.z >= 0 && targetpos.x - currentpos.x <= 0) { theta = PI - theta; } //2 사분면
-						   if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x <= 0){ theta = PI + theta; } // 3 사분면
-						   double distance = sqrt(pow(targetpos.x - currentpos.x, 2) + pow(targetpos.z - currentpos.z, 2));
-						   currentBall->setPower(distance * cos(theta), distance * sin(theta));
+						   if (everyBallVelocity.isZero()){//공이 멈춰있는지 확인
+							   // 출발 상태 저장
+							   best->saveLastStatus(g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
 
-						   for (int i = 0; i < 4; i++) {
-							   for (int j = 0; j < 4; j++) {
-								   g_sphere[i].setHasCollided(j, false);
+							   //CSphere * currentBall;
+							   //현재 공이 빨간공 두개만 맞췄을 경우가 아니면 공을 바꾼다
+							   if (currentBall->getHasCollided(0) && currentBall->getHasCollided(1) && !currentBall->getHasCollided(2) && !currentBall->getHasCollided(3)) {
 							   }
+							   else {
+								   changeBall();
+							   }
+							   D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
+							   D3DXVECTOR3	currentpos = currentBall->getCenter();
+							   double theta = acos(sqrt(pow(targetpos.x - currentpos.x, 2)) / sqrt(pow(targetpos.x - currentpos.x, 2) +
+								   pow(targetpos.z - currentpos.z, 2)));		// 기본 1 사분면
+							   if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x >= 0) { theta = -theta; }	//4 사분면
+							   if (targetpos.z - currentpos.z >= 0 && targetpos.x - currentpos.x <= 0) { theta = PI - theta; } //2 사분면
+							   if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x <= 0){ theta = PI + theta; } // 3 사분면
+							   double distance = sqrt(pow(targetpos.x - currentpos.x, 2) + pow(targetpos.z - currentpos.z, 2));
+							   currentBall->setPower(distance * cos(theta), distance * sin(theta));
+
+							   for (int i = 0; i < 4; i++) {
+								   for (int j = 0; j < 4; j++) {
+									   g_sphere[i].setHasCollided(j, false);
+								   }
+							   }
+							   // 이동 상태 저장 (Replay 용)
+							   best->saveCurStatus(g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
+							   break;
 						   }
-						   // 이동 상태 저장 (Replay 용)
-						   best->saveCurStatus(g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
 						   break;
 					   }
-					   break;
 	}
 
 	case WM_MOUSEMOVE:

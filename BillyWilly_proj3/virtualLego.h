@@ -37,6 +37,7 @@ public:
 	bool getHasCollided(int idx);
 	void setHasCollided(int idx, bool bln);
 	int getIndex();
+	bool isFinishTurn();
 private:
 	D3DXMATRIX              m_mLocal;
 	D3DMATERIAL9            m_mtrl;
@@ -93,4 +94,16 @@ private:
 	D3DLIGHT9           m_lit;
 	ID3DXMesh*          m_pMesh;
 	d3d::BoundingSphere m_bound;
+};
+
+class EveryBallVelocity{
+public:
+	EveryBallVelocity(){}
+	~EveryBallVelocity(){}
+	bool isZero(){
+		return status;
+	}
+	void setStatus(CSphere*);
+private:
+	bool status;
 };
