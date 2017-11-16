@@ -21,6 +21,7 @@
 #include<MMSystem.h>
 #pragma comment(lib,"Winmm.lib")
 #include <iostream>
+#include "resource.h"
 
 int Sound = 0;                                   // 소리 켜져있을 때는 0 !
 
@@ -126,24 +127,24 @@ public:
 			{
 
 				if (ball_v_result>800) {
-					sndPlaySound("c:\\효과음\\부딪히는소리5.wav", SND_ASYNC | SND_NOSTOP);                    // 부딪히는 소리 재생         // 5단계
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE9), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);						// 부딪히는 소리 재생         // 5단계
 				}
 			
 				else if (ball_v_result > 600)
 				{	
-					sndPlaySound("c:\\효과음\\부딪히는소리4.wav", SND_ASYNC | SND_NOSTOP);                    // 부딪히는 소리 재생         // 4단계		
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE8), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);                   // 부딪히는 소리 재생         // 4단계		
 				}
 				else if (ball_v_result > 400)
 				{
-					sndPlaySound("c:\\효과음\\부딪히는소리3.wav", SND_ASYNC | SND_NOSTOP);                    // 부딪히는 소리 재생         // 3단계
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE7), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);                   // 부딪히는 소리 재생         // 3단계
 				}
 				else if (ball_v_result > 200)
 				{
-					sndPlaySound("c:\\효과음\\부딪히는소리2.wav", SND_ASYNC | SND_NOSTOP);                    // 부딪히는 소리 재생         // 2단계
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE6), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);                // 부딪히는 소리 재생         // 2단계
 				}
 				else
 				{
-					sndPlaySound("c:\\효과음\\부딪히는소리1.wav", SND_ASYNC | SND_NOSTOP);                    // 부딪히는 소리 재생         // 1단계
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE5), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);           // 부딪히는 소리 재생         // 1단계
 				}
 
 			}
@@ -163,7 +164,7 @@ public:
 
 			if (this->deductScore(ball) && Sound == 0)                     // 빡이 난 경우    !
 			{
-				sndPlaySound("c:\\효과음\\상대방공쳤을때.wav", SND_ASYNC | SND_NOSTOP);
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE11), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
 			}
 
 			this->hit_count++;                                // 충돌했을 경우 추가 !
@@ -439,15 +440,15 @@ public:
 			if (Sound == 0)
 			{
 				if (ball_v_result>800) {
-					sndPlaySound("c:\\효과음\\벽3.wav", SND_ASYNC | SND_NOSTOP);                    // 부딪히는 소리 재생         // 3단계
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE4), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);						// 부딪히는 소리 재생         // 3단계
 				}
 				else if (ball_v_result > 400)
 				{
-					sndPlaySound("c:\\효과음\\벽2.wav", SND_ASYNC | SND_NOSTOP);                    // 부딪히는 소리 재생         // 2단계
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE3), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);						// 부딪히는 소리 재생         // 2단계
 				}
 				else
 				{
-					sndPlaySound("c:\\효과음\\벽1.wav", SND_ASYNC | SND_NOSTOP);                    // 부딪히는 소리 재생         // 1단계
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE2), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);						// 부딪히는 소리 재생         // 1단계
 				}
 			}
 		
@@ -705,6 +706,8 @@ bool Display(float timeDelta)
 
 	if (Device)
 	{
+	
+
 		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
 		Device->BeginScene();
 
@@ -740,6 +743,7 @@ bool Display(float timeDelta)
 		Device->EndScene();
 		Device->Present(0, 0, 0, 0);
 		Device->SetTexture(0, NULL);
+
 	}
 	return true;
 }
@@ -890,6 +894,7 @@ int WINAPI WinMain(HINSTANCE hinstance,
 		::MessageBox(0, "Setup() - FAILED", 0, 0);
 		return 0;
 	}
+
 
 	d3d::EnterMsgLoop(Display);
 
