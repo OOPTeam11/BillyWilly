@@ -1,8 +1,8 @@
 #include "Rank.h"
-#include <string>
+#include "Game.h"
 #include <vector>
-#include <iostream>
 #include <fstream>
+#include <algorithm>
 
 using namespace std;
 
