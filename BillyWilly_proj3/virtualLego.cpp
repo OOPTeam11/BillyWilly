@@ -125,8 +125,8 @@ bool CSphere::hasIntersected(CSphere& ball)
 		ball.setHasCollided(this->getIndex(), true);
 
 		// 지금 움직이는 공인 흰색 or 노란색인데 빨간 공을 쳤을 경우
-		if (ball.getIndex() == currentBall->getIndex() && (ball.getIndex() == RED1BALL || ball.getIndex() == RED2BALL)) {
-			best->cusionCount.push_back(ball.getIndex());
+		if (ball.getIndex() == currentBall->getIndex() && (this->getIndex() == RED1BALL || this->getIndex() == RED2BALL)) {
+			best->cusionCount.push_back(RED1BALL);
 		}
 		return true;
 	}
@@ -652,6 +652,9 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			if (best->threeCushion()) {
 				best->showReplay(d3d::getTimeGap(), &Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
 			}
+			for (int i = 0; i < best->cusionCount.size(); i++) {
+				best->cusionCount[i] = 0;
+			}
 		}
 		switch (msg) {
 		case WM_DESTROY:
@@ -672,14 +675,6 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 									   (wire ? D3DFILL_WIREFRAME : D3DFILL_SOLID));
 							   }
 							   break;
-						   case VK_F1:
-							   // 출발 상태 디스플레이 띄우기
-							   best->showStartPos(d3d::getTimeGap(), &Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
-							   break;
-						   case VK_F2:
-							   // 이동 정보 디스플레이 띄우기
-							   best->showReplay(d3d::getTimeGap(), &Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
-							   break;
 						   case VK_SPACE:
 							   if (everyBallVelocity.isZero()){
 								   // 출발 상태 저장
@@ -690,7 +685,6 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 								   //CSphere * currentBall;
 								   //현재 공이 빨간공 두개만 맞췄을 경우가 아니면 공을 바꾼다
 								   if (currentBall->getHasCollided(0) && currentBall->getHasCollided(1) && !currentBall->getHasCollided(2) && !currentBall->getHasCollided(3)) {
-
 
 								   }
 								   else {

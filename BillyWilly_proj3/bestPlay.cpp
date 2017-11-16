@@ -94,7 +94,7 @@ void bestPlay::showReplay(float timeDelta, IDirect3DDevice9** Device, D3DXMATRIX
 
 	for (int i = 0; i < 4; i++) {
 		g_sphere[i] = this->cur_g_sphere[i];
-		g_legowall[i] = this->last_g_legowall[i];
+		g_legowall[i] = this->cur_g_legowall[i];
 	}
 	*g_legoPlane = this->cur_g_legoPlane;
 	*g_target_blueball = this->cur_g_target_blueball;
@@ -132,20 +132,12 @@ void bestPlay::showReplay(float timeDelta, IDirect3DDevice9** Device, D3DXMATRIX
 		(*Device)->Present(0, 0, 0, 0);
 		(*Device)->SetTexture(0, NULL);
 	}
-
-	for (int i = 0; i < 4; i++) {
-		last_g_sphere[i] = this->cur_g_sphere[i];
-		last_g_legowall[i] = this->cur_g_legowall[i];
-	}
-	last_g_legoPlane = this->cur_g_legoPlane;
-	last_g_target_blueball = this->cur_g_target_blueball;
-	last_g_light = this->cur_g_light;
+	
 }
 
 bool bestPlay::threeCushion() {
 	int redBallCount = 0;
 	int wallCount = 0;
-	bool temp;
 	for (int i = 0; i < cusionCount.size(); i++) {
 		if (cusionCount[i] == RED1BALL || cusionCount[i] == RED2BALL) {
 			redBallCount++;
@@ -160,4 +152,5 @@ bool bestPlay::threeCushion() {
 			else return true;
 		}
 	}
+	return false;
 }
