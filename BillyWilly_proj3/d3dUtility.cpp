@@ -13,6 +13,8 @@
 
 #include "d3dUtility.h"
 
+float timeGap;
+
 bool d3d::InitD3D(
 	HINSTANCE hInstance,
 	int width, int height,
@@ -164,11 +166,18 @@ int d3d::EnterMsgLoop( bool (*ptr_display)(float timeDelta) )
 			double currTime  = (double)timeGetTime();
 			double timeDelta = (currTime - lastTime)*0.0007;
 			ptr_display((float)timeDelta);
-
+			setTimeGap((float)timeDelta);
 			lastTime = currTime;
         }
     }
     return msg.wParam;
+}
+
+float d3d::getTimeGap() {
+	return timeGap;
+}
+void d3d::setTimeGap(float timeDelta) {
+	timeGap = timeDelta;
 }
 
 D3DLIGHT9 d3d::InitDirectionalLight(D3DXVECTOR3* direction, D3DXCOLOR* color)

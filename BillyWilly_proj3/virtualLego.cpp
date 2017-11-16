@@ -22,11 +22,25 @@
 // bestPlay instance
 bestPlay *best = new bestPlay();
 
+
 IDirect3DDevice9* Device = NULL;
 
 // window size
 const int Width = 1024;
 const int Height = 768;
+
+// -----------------------------------------------------------------------------
+// Global variables
+// -----------------------------------------------------------------------------
+CWall	g_legoPlane;
+CWall	g_legowall[4];
+CSphere	g_sphere[4];
+CSphere	g_target_blueball;
+CSphere * currentBall;
+CLight	g_light;
+EveryBallVelocity everyBallVelocity;
+
+bool VK_SPACE_interrupt = false;
 
 // There are four balls
 // initialize the position (coordinate) of each ball (ball0 ~ ball3)
@@ -46,6 +60,11 @@ D3DXMATRIX g_mProj;
 #define PI 3.14159265
 #define M_HEIGHT 0.01
 #define DECREASE_RATE 0.9982
+#define RED1BALL 0
+#define RED2BALL 1
+#define YELLOWBALL 2
+#define WHITEBALL 3
+#define WALL 5
 
 // -----------------------------------------------------------------------------
 // CSphere class definition
@@ -105,6 +124,10 @@ bool CSphere::hasIntersected(CSphere& ball)
 		setHasCollided(ball.getIndex(), true);
 		ball.setHasCollided(this->getIndex(), true);
 
+		// 지금 움직이는 공인 흰색 or 노란색인데 빨간 공을 쳤을 경우
+		if (ball.getIndex() == currentBall->getIndex() && (ball.getIndex() == RED1BALL || ball.getIndex() == RED2BALL)) {
+			best->cusionCount.push_back(ball.getIndex());
+		}
 		return true;
 	}
 
@@ -300,8 +323,10 @@ void CWall::hitBy(CSphere& ball)
 
 	if (hasIntersected(ball)) {
 		// cusion hit count ++
-		//best->cusionCount++;
-
+		if (ball.getIndex() == currentBall->getIndex()){
+			best->cusionCount.push_back(WALL);
+		}
+		
 		vx = ball.getVelocity_X();
 		vz = ball.getVelocity_Z();
 		tangent = abs(vz / vx);
@@ -420,25 +445,29 @@ void CLight::draw(IDirect3DDevice9* pDevice)
 D3DXVECTOR3 CLight::getPosition(void) const { return D3DXVECTOR3(m_lit.Position); }
 
 void EveryBallVelocity::setStatus(CSphere* g_sphere){
-	status = true;
+	cur_status = true;
 	for (int i = 0; i < 4; i++){
-		if (g_sphere[i].getVelocity_X() || g_sphere[i].getVelocity_Z()){
-			status = false;
+		if (g_sphere[i].getVelocity_X() || g_sphere[i].getVelocity_Z()){ // i번째 공이 멈춰있나?
+			cur_status = false;
 			break;
 		}
 	}
+	
+	if (pre_status == false && cur_status == true){
+		finishTurn = true;
+	}
+	else{
+		finishTurn = false;
+	}
+
+	pre_status = cur_status;
 }
 
-// -----------------------------------------------------------------------------
-// Global variables
-// -----------------------------------------------------------------------------
-CWall	g_legoPlane;
-CWall	g_legowall[4];
-CSphere	g_sphere[4];
-CSphere	g_target_blueball;
-CSphere * currentBall;
-CLight	g_light;
-EveryBallVelocity everyBallVelocity;
+bool EveryBallVelocity::isFinishTurn(){
+	return finishTurn;
+}
+
+
 
 double g_camera_pos[3] = { 0.0, 5.0, -8.0 };
 
@@ -574,6 +603,12 @@ bool Display(float timeDelta)
 		g_target_blueball.draw(Device, g_mWorld);
 		g_light.draw(Device);
 
+		IDirect3DDevice9* g_pd3dDevice;
+		//ID3DXLine* g_pLine;
+		//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
+		//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
+		//D3DXVECTOR3 lines[] = { currentBall->getCenter(), g_target_blueball.getCenter() };
+
 		Device->EndScene();
 		Device->Present(0, 0, 0, 0);
 		Device->SetTexture(0, NULL);
@@ -592,134 +627,157 @@ void changeBall() {
 	}
 }
 
-LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	static bool wire = false;
-	static bool isReset = true;
-	static int old_x = 0;
-	static int old_y = 0;
-	static enum { WORLD_MOVE, LIGHT_MOVE, BLOCK_MOVE } move = WORLD_MOVE;
 
-	everyBallVelocity.setStatus(g_sphere);
+void drawLine(CSphere *currentball, CSphere redball1, CSphere redball2, CSphere yellowball, CSphere whiteball, CSphere blueball){
+	if (currentBall->getIndex() == yellowball.getIndex()){
 
-	switch (msg) {
-	case WM_DESTROY:
-	{
-					   ::PostQuitMessage(0);
-					   break;
 	}
-	case WM_KEYDOWN:
+	else if (currentBall->getIndex() == whiteball.getIndex()){
+
+	}
+}
+LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
-					   switch (wParam) {
-					   case VK_ESCAPE:
-						   ::DestroyWindow(hwnd);
-						   break;
-					   case VK_RETURN:
-						   if (NULL != Device) {
-							   wire = !wire;
-							   Device->SetRenderState(D3DRS_FILLMODE,
-								   (wire ? D3DFILL_WIREFRAME : D3DFILL_SOLID));
-						   }
-						   break;
-					   case VK_F1:
-						   // 출발 상태 디스플레이 띄우기
-						   best->showStartPos(&Device, &g_mWorld);
-						   break;
-					   case VK_F2:
-						   // 이동 정보 디스플레이 띄우기
-						   best->showReplay(&Device, &g_mWorld);
-						   break;
-					   case VK_SPACE:
-						   if (everyBallVelocity.isZero()){//공이 멈춰있는지 확인
-							   // 출발 상태 저장
-							   best->saveLastStatus(g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
+		static bool wire = false;
+		static bool isReset = true;
+		static int old_x = 0;
+		static int old_y = 0;
+		static enum { WORLD_MOVE, LIGHT_MOVE, BLOCK_MOVE } move = WORLD_MOVE;
 
-							   //CSphere * currentBall;
-							   //현재 공이 빨간공 두개만 맞췄을 경우가 아니면 공을 바꾼다
-							   if (currentBall->getHasCollided(0) && currentBall->getHasCollided(1) && !currentBall->getHasCollided(2) && !currentBall->getHasCollided(3)) {
-							   }
-							   else {
-								   changeBall();
-							   }
-							   D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
-							   D3DXVECTOR3	currentpos = currentBall->getCenter();
-							   double theta = acos(sqrt(pow(targetpos.x - currentpos.x, 2)) / sqrt(pow(targetpos.x - currentpos.x, 2) +
-								   pow(targetpos.z - currentpos.z, 2)));		// 기본 1 사분면
-							   if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x >= 0) { theta = -theta; }	//4 사분면
-							   if (targetpos.z - currentpos.z >= 0 && targetpos.x - currentpos.x <= 0) { theta = PI - theta; } //2 사분면
-							   if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x <= 0){ theta = PI + theta; } // 3 사분면
-							   double distance = sqrt(pow(targetpos.x - currentpos.x, 2) + pow(targetpos.z - currentpos.z, 2));
-							   currentBall->setPower(distance * cos(theta), distance * sin(theta));
+		everyBallVelocity.setStatus(g_sphere);
 
-							   for (int i = 0; i < 4; i++) {
-								   for (int j = 0; j < 4; j++) {
-									   g_sphere[i].setHasCollided(j, false);
+		// 턴 끝날때 호출되는 call back
+		if (everyBallVelocity.isFinishTurn()){
+			// 빨간 공 두개를 맞추고나서 세번째로 벽을 쳤을 경우 제외
+			if (best->threeCushion()) {
+				best->showReplay(d3d::getTimeGap(), &Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+			}
+		}
+		switch (msg) {
+		case WM_DESTROY:
+		{
+						   ::PostQuitMessage(0);
+						   break;
+		}
+		case WM_KEYDOWN:
+		{
+						   switch (wParam) {
+						   case VK_ESCAPE:
+							   ::DestroyWindow(hwnd);
+							   break;
+						   case VK_RETURN:
+							   if (NULL != Device) {
+								   wire = !wire;
+								   Device->SetRenderState(D3DRS_FILLMODE,
+									   (wire ? D3DFILL_WIREFRAME : D3DFILL_SOLID));
+							   }
+							   break;
+						   case VK_F1:
+							   // 출발 상태 디스플레이 띄우기
+							   best->showStartPos(d3d::getTimeGap(), &Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+							   break;
+						   case VK_F2:
+							   // 이동 정보 디스플레이 띄우기
+							   best->showReplay(d3d::getTimeGap(), &Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+							   break;
+						   case VK_SPACE:
+							   if (everyBallVelocity.isZero()){
+								   // 출발 상태 저장
+								   best->saveLastStatus(d3d::getTimeGap(), g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
+
+								   VK_SPACE_interrupt = true;
+
+								   //CSphere * currentBall;
+								   //현재 공이 빨간공 두개만 맞췄을 경우가 아니면 공을 바꾼다
+								   if (currentBall->getHasCollided(0) && currentBall->getHasCollided(1) && !currentBall->getHasCollided(2) && !currentBall->getHasCollided(3)) {
+
+
 								   }
+								   else {
+									   changeBall();
+								   }
+								   D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
+								   D3DXVECTOR3	currentpos = currentBall->getCenter();
+
+								   double theta = acos(sqrt(pow(targetpos.x - currentpos.x, 2)) / sqrt(pow(targetpos.x - currentpos.x, 2) +
+									   pow(targetpos.z - currentpos.z, 2)));		// 기본 1 사분면
+								   if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x >= 0) { theta = -theta; }	//4 사분면
+								   if (targetpos.z - currentpos.z >= 0 && targetpos.x - currentpos.x <= 0) { theta = PI - theta; } //2 사분면
+								   if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x <= 0){ theta = PI + theta; } // 3 사분면
+								   double distance = sqrt(pow(targetpos.x - currentpos.x, 2) + pow(targetpos.z - currentpos.z, 2));
+								   currentBall->setPower(distance * cos(theta), distance * sin(theta));
+
+								   for (int i = 0; i < 4; i++) {
+									   for (int j = 0; j < 4; j++) {
+										   g_sphere[i].setHasCollided(j, false);
+									   }
+								   }
+								   // 이동 상태 저장 (Replay 용)
+
+								   best->saveCurStatus(d3d::getTimeGap(), g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
+								   break;
 							   }
-							   // 이동 상태 저장 (Replay 용)
-							   best->saveCurStatus(g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
 							   break;
 						   }
-						   break;
-					   }
-	}
+		}
 
-	case WM_MOUSEMOVE:
-	{
-						 int new_x = LOWORD(lParam);
-						 int new_y = HIWORD(lParam);
-						 float dx;
-						 float dy;
 
-						 if (LOWORD(wParam) & MK_LBUTTON) {
+		case WM_MOUSEMOVE:
+		{
+							 int new_x = LOWORD(lParam);
+							 int new_y = HIWORD(lParam);
+							 float dx;
+							 float dy;
 
-							 if (isReset) {
-								 isReset = false;
+							 if (LOWORD(wParam) & MK_LBUTTON) {
+
+								 if (isReset) {
+									 isReset = false;
+								 }
+								 else {
+									 D3DXVECTOR3 vDist;
+									 D3DXVECTOR3 vTrans;
+									 D3DXMATRIX mTrans;
+									 D3DXMATRIX mX;
+									 D3DXMATRIX mY;
+
+									 switch (move) {
+									 case WORLD_MOVE:
+										 dx = (old_x - new_x) * 0.01f;
+										 dy = (old_y - new_y) * 0.01f;
+										 D3DXMatrixRotationY(&mX, dx);
+										 D3DXMatrixRotationX(&mY, dy);
+										 g_mWorld = g_mWorld * mX * mY;
+
+										 break;
+									 }
+								 }
+
+								 old_x = new_x;
+								 old_y = new_y;
+
 							 }
 							 else {
-								 D3DXVECTOR3 vDist;
-								 D3DXVECTOR3 vTrans;
-								 D3DXMATRIX mTrans;
-								 D3DXMATRIX mX;
-								 D3DXMATRIX mY;
+								 isReset = true;
 
-								 switch (move) {
-								 case WORLD_MOVE:
-									 dx = (old_x - new_x) * 0.01f;
-									 dy = (old_y - new_y) * 0.01f;
-									 D3DXMatrixRotationY(&mX, dx);
-									 D3DXMatrixRotationX(&mY, dy);
-									 g_mWorld = g_mWorld * mX * mY;
+								 if (LOWORD(wParam) & MK_RBUTTON) {
+									 dx = (old_x - new_x);// * 0.01f;
+									 dy = (old_y - new_y);// * 0.01f;
 
-									 break;
+									 D3DXVECTOR3 coord3d = g_target_blueball.getCenter();
+									 g_target_blueball.setCenter(coord3d.x + dx*(-0.007f), coord3d.y, coord3d.z + dy*0.007f);
 								 }
+								 old_x = new_x;
+								 old_y = new_y;
+
+								 move = WORLD_MOVE;
 							 }
+							 break;
+		}
+		}
 
-							 old_x = new_x;
-							 old_y = new_y;
-
-						 }
-						 else {
-							 isReset = true;
-
-							 if (LOWORD(wParam) & MK_RBUTTON) {
-								 dx = (old_x - new_x);// * 0.01f;
-								 dy = (old_y - new_y);// * 0.01f;
-
-								 D3DXVECTOR3 coord3d = g_target_blueball.getCenter();
-								 g_target_blueball.setCenter(coord3d.x + dx*(-0.007f), coord3d.y, coord3d.z + dy*0.007f);
-							 }
-							 old_x = new_x;
-							 old_y = new_y;
-
-							 move = WORLD_MOVE;
-						 }
-						 break;
+		return ::DefWindowProc(hwnd, msg, wParam, lParam);
 	}
-	}
-
-	return ::DefWindowProc(hwnd, msg, wParam, lParam);
-}
 
 int WINAPI WinMain(HINSTANCE hinstance,
 	HINSTANCE prevInstance,

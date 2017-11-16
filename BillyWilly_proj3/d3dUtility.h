@@ -130,6 +130,9 @@ namespace d3d
 	//
 	// Constants
 	//
+	float getTimeGap();
+	void setTimeGap(float timeDelta);
+
 }
 
 #endif // __d3dUtilityH__

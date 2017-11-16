@@ -101,9 +101,12 @@ public:
 	EveryBallVelocity(){}
 	~EveryBallVelocity(){}
 	bool isZero(){
-		return status;
+		return cur_status;
 	}
 	void setStatus(CSphere*);
+	bool isFinishTurn();
 private:
-	bool status;
+	bool pre_status;
+	bool cur_status;
+	bool finishTurn; // status가 false에서 true로 바뀌는 한 순간만 true
 };
