@@ -104,7 +104,7 @@ private:
 
 class EveryBallVelocity{
 public:
-	EveryBallVelocity(){}
+	EveryBallVelocity() :pre_status(true), cur_status(true){}
 	~EveryBallVelocity(){}
 	bool isZero(){
 		return cur_status;

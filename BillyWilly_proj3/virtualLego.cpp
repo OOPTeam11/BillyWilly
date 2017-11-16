@@ -564,7 +564,7 @@ D3DXVECTOR3 CLight::getPosition(void) const { return D3DXVECTOR3(m_lit.Position)
 void EveryBallVelocity::setStatus(CSphere* g_sphere){
 	cur_status = true;
 	for (int i = 0; i < 4; i++){
-		if (g_sphere[i].getVelocity_X() >0.03 || g_sphere[i].getVelocity_Z() > 0.03) { // i번째 공이 멈춰있나?
+		if (abs(g_sphere[i].getVelocity_X()) >0.0001 || abs(g_sphere[i].getVelocity_Z()) > 0.0001) { // i번째 공이 멈춰있나?
 			cur_status = false;
 			break;
 		}
@@ -629,7 +629,7 @@ bool Setup()
 		}
 	}
 
-	currentBall = &(g_sphere[2]);	//처음에 공이 한번 바뀌므로 노란공으로 설정(스페이스를 눌렀을 때 한번 바뀌므로 흰공으로 시작)
+	currentBall = &(g_sphere[3]);	//처음에 공이 한번 바뀌므로 노란공으로 설정(스페이스를 눌렀을 때 한번 바뀌므로 흰공으로 시작)
 
 	// create blue ball for set direction
 	if (false == g_target_blueball.create(Device, 4, d3d::BLUE)) return false;
@@ -734,6 +734,12 @@ bool Display(float timeDelta)
 		Device->EndScene();
 		Device->Present(0, 0, 0, 0);
 		Device->SetTexture(0, NULL);
+		
+		//mingyu part -debug
+		//const char str[100] = "";;
+		string str = "v_x:" + std::to_string(currentBall->getVelocity_X())  + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
+		OutputDebugString(str.c_str());
+		//mingyu part
 	}
 	return true;
 }
@@ -770,7 +776,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		// 턴 끝날때 호출되는 call back
 		if (everyBallVelocity.isFinishTurn()){
-			
+			//::MessageBox(0, "isFinishTurn", 0, 0);
 			// 빨간 공 두개를 맞추고나서 세번째로 벽을 쳤을 경우 제외
 			if (best->threeCushion()) {
 				
@@ -799,6 +805,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 			game->onTurnEnd(currentBall->getIndex(), hasCollided, isTurnChange);
 			if (isTurnChange == true){
+				//::MessageBox(0, "changeBall", 0, 0);
 				changeBall();
 
 				if (currentBall->getIndex() == 3 && Sound == 0)                  // 바뀐 공이 흰색이면 ! 마이턴 ! 1 ~ 4 모드 !
