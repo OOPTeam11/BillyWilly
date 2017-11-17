@@ -36,6 +36,15 @@ bestPlay *best = new bestPlay();
 
 int Sound = 0;                                   // 소리 켜져있을 때는 0 !
 
+
+// Juhyeon part header
+#include "C3DText.h"		//3D Text 표시를 위해서 정의
+#include "CText.h"			//Text 표시를 위해서 새로운 자료구조 정의
+#include "Rect.h"			//사각형 및 원 정의
+// 헤더에 Define 도 필수 추가 
+
+// Juhyeon part header
+
 IDirect3DDevice9* Device = NULL;
 
 // window size
@@ -58,6 +67,15 @@ Game* game = new Game();
 // mingyu part
 
 bool VK_SPACE_interrupt = false;
+
+//JuHyeon Part
+Circle Ball[8];
+C3DText intro;
+C3DText intro2;
+CText Mode[8];
+int State = 0;  // 0은 처음화면(사운드에 따라 2화면) 1~4는 mode 1~4 5는 rank 6은 도움말 
+
+//JuHyeon Part
 
 
 // There are four balls
@@ -662,6 +680,34 @@ bool Setup()
 		(float)Width / (float)Height, 1.0f, 100.0f);
 	Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
 
+	//Juhyeon Part
+	intro.create(Device, 40, 20, 90, "Times New Roman");
+	intro.Set(Device, "Billy Willy!");
+	intro.setPosition(-4.5, 2.5f, 0);
+	intro2.create(Device, 40, 20, 90, "Times New Roman");
+	intro2.Set(Device, "Welcome MY GAME!");
+	intro2.setPosition(-3.82, 1.5f, 0);
+
+	Mode[0].Init(Device, 27, 10, 700, "Airal");
+	Mode[1].Init(Device, 27, 10, 700, "Airal");
+	Mode[2].Init(Device, 27, 10, 700, "Airal");
+	Mode[3].Init(Device, 27, 10, 700, "Airal");
+	Mode[4].Init(Device, 27, 10, 700, "Airal");
+	Mode[5].Init(Device, 27, 10, 700, "Airal");
+	Mode[6].Init(Device, 27, 10, 700, "Airal");
+	Mode[7].Init(Device, 27, 10, 700, "Airal");
+
+	Ball[0].InitVB(Device, 180, 450, 60, d3d::RED);
+	Ball[1].InitVB(Device, 380, 450, 60, d3d::RED);
+	Ball[2].InitVB(Device, 580, 450, 60, d3d::RED);
+	Ball[3].InitVB(Device, 780, 450, 60, d3d::RED);
+	Ball[4].InitVB(Device, 280, 550, 60, d3d::BLUE);
+	Ball[5].InitVB(Device, 480, 550, 60, d3d::BLUE);
+	Ball[6].InitVB(Device, 680, 550, 60, d3d::BLUE);
+	Ball[7].InitVB(Device, 680, 550, 60, d3d::RED);
+	//Juhyeon Part
+
+
 	// Set render states.
 	Device->SetRenderState(D3DRS_LIGHTING, TRUE);
 	Device->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
@@ -696,51 +742,186 @@ bool Display(float timeDelta)
 	int i = 0;
 	int j = 0;
 
-
-	if (Device)
-	{
+	if (State == 0 && Sound ==0) {  // 소리 켜져잇고 첫화면  주현
 		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
 		Device->BeginScene();
+		
 
-		// update the position of each ball. during update, check whether each ball hit by walls.
-		for (i = 0; i < 4; i++) {
-			g_sphere[i].ballUpdate(timeDelta);
-			for (j = 0; j < 4; j++){ g_legowall[i].hitBy(g_sphere[j]); }
-		}
+		D3DXVECTOR3 pos(0.0f, 0.0f, -10.0f);
+		D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+		D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+		Device->SetTransform(D3DTS_VIEW, &g_mView);
 
-		// check whether any two balls hit together and update the direction of balls
-		for (i = 0; i < 4; i++){
-			for (j = 0; j < 4; j++) {
-				if (i < j)
-					g_sphere[i].hitBy(g_sphere[j]);
-			}
-		}
 
-		// draw plane, walls, and spheres
-		g_legoPlane.draw(Device, g_mWorld);
-		for (i = 0; i<4; i++) 	{
-			g_legowall[i].draw(Device, g_mWorld);
-			g_sphere[i].draw(Device, g_mWorld);
-		}
-		g_target_blueball.draw(Device, g_mWorld);
-		g_light.draw(Device);
+		D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.2,
+			(float)Width / (float)Height, 0.f, 10000.0f);
+		Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
 
-		IDirect3DDevice9* g_pd3dDevice;
-		//ID3DXLine* g_pLine;
-		//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
-		//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
-		//D3DXVECTOR3 lines[] = { currentBall->getCenter(), g_target_blueball.getCenter() };
+		Ball[0].Draw(Device);
+		Ball[1].Draw(Device);
+		Ball[2].Draw(Device);
+		Ball[3].Draw(Device);
+		Ball[4].Draw(Device);
+		Ball[5].Draw(Device);
+		Ball[6].Draw(Device);
+
+		Mode[0].Print("Mode1", 150, 440, d3d::WHITE);
+		Mode[1].Print("Mode2", 350, 440, d3d::WHITE);
+		Mode[2].Print("Mode3", 550, 440, d3d::WHITE);
+		Mode[3].Print("Mode4", 750, 440, d3d::WHITE);
+		Mode[4].Print("RANKING", 235, 540, d3d::WHITE);
+		Mode[5].Print("HELP", 455, 540, d3d::WHITE);
+		Mode[6].Print("SOUND", 645, 540, d3d::WHITE);
+
+		intro.draw(Device, g_mWorld);
+		intro2.draw(Device, g_mWorld);
 
 		Device->EndScene();
 		Device->Present(0, 0, 0, 0);
 		Device->SetTexture(0, NULL);
-		
-		//mingyu part -debug
-		//const char str[100] = "";;
-		string str = "v_x:" + std::to_string(currentBall->getVelocity_X())  + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
-		OutputDebugString(str.c_str());
-		//mingyu part
 	}
+	else if (State == 0 && Sound == 1) {		//소리 꺼져있고 첫화면 주현
+		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
+		Device->BeginScene();
+
+
+
+		D3DXVECTOR3 pos(0.0f, 0.0f, -10.0f);
+		D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+		D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+		Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+
+		D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.2,
+			(float)Width / (float)Height, 0.f, 10000.0f);
+		Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+
+		Ball[0].Draw(Device);
+		Ball[1].Draw(Device);
+		Ball[2].Draw(Device);
+		Ball[3].Draw(Device);
+		Ball[4].Draw(Device);
+		Ball[5].Draw(Device);
+		Ball[7].Draw(Device);
+
+		Mode[0].Print("Mode1", 150, 440, d3d::WHITE);
+		Mode[1].Print("Mode2", 350, 440, d3d::WHITE);
+		Mode[2].Print("Mode3", 550, 440, d3d::WHITE);
+		Mode[3].Print("Mode4", 750, 440, d3d::WHITE);
+		Mode[4].Print("RANKING", 235, 540, d3d::WHITE);
+		Mode[5].Print("HELP", 455, 540, d3d::WHITE);
+		Mode[7].Print("MUTE", 650, 540, d3d::WHITE);
+
+		intro.draw(Device, g_mWorld);
+		intro2.draw(Device, g_mWorld);
+
+		Device->EndScene();
+		Device->Present(0, 0, 0, 0);
+		Device->SetTexture(0, NULL);
+	}
+	else if (State == 1) { //게임모드 1 주현
+		if (Device)
+		{
+			Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
+			Device->BeginScene();
+
+			// update the position of each ball. during update, check whether each ball hit by walls.
+			for (i = 0; i < 4; i++) {
+				g_sphere[i].ballUpdate(timeDelta);
+				for (j = 0; j < 4; j++) { g_legowall[i].hitBy(g_sphere[j]); }
+			}
+
+			// check whether any two balls hit together and update the direction of balls
+			for (i = 0; i < 4; i++) {
+				for (j = 0; j < 4; j++) {
+					if (i < j)
+						g_sphere[i].hitBy(g_sphere[j]);
+				}
+			}
+
+			// draw plane, walls, and spheres
+			g_legoPlane.draw(Device, g_mWorld);
+			for (i = 0; i < 4; i++) {
+				g_legowall[i].draw(Device, g_mWorld);
+				g_sphere[i].draw(Device, g_mWorld);
+			}
+			g_target_blueball.draw(Device, g_mWorld);
+			g_light.draw(Device);
+
+			IDirect3DDevice9* g_pd3dDevice;
+			//ID3DXLine* g_pLine;
+			//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
+			//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
+			//D3DXVECTOR3 lines[] = { currentBall->getCenter(), g_target_blueball.getCenter() };
+
+			Device->EndScene();
+			Device->Present(0, 0, 0, 0);
+			Device->SetTexture(0, NULL);
+
+			//mingyu part -debug
+			//const char str[100] = "";;
+			string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
+			OutputDebugString(str.c_str());
+			//mingyu part
+		}
+	}
+	else if (State == 2) { //게임모드 2 주현
+		
+	}
+	else if (State == 3) { //게임모드 3 주현
+
+	}
+	else if (State == 4) { //게임모드 4 주현
+
+	}
+	else if (State == 5) { // 랭킹 볼수있는 화면 주현
+		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
+		Device->BeginScene();
+
+
+
+		D3DXVECTOR3 pos(0.0f, 0.0f, -10.0f);
+		D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+		D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+		Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+
+		D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.2,
+			(float)Width / (float)Height, 0.f, 10000.0f);
+		Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+
+		Device->EndScene();
+		Device->Present(0, 0, 0, 0);
+		Device->SetTexture(0, NULL);
+
+	}
+	else if (State == 6) { // 도움말 설명 주현
+		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
+		Device->BeginScene();
+
+
+
+		D3DXVECTOR3 pos(0.0f, 0.0f, -10.0f);
+		D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+		D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+		Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+
+		D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.2,
+			(float)Width / (float)Height, 0.f, 10000.0f);
+		Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+
+		Device->EndScene();
+		Device->Present(0, 0, 0, 0);
+		Device->SetTexture(0, NULL);
+
+	}
+
+
 	return true;
 }
 
@@ -775,21 +956,21 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 		// 턴 끝날때 호출되는 call back
-		if (everyBallVelocity.isFinishTurn()){
+		if (everyBallVelocity.isFinishTurn()) {
 
 			//::MessageBox(0, "isFinishTurn", 0, 0);
 			// 빨간 공 두개를 맞추고나서 세번째로 벽을 쳤을 경우 제외
 			if (best->threeCushion()) {
-				
+
 				if (Sound == 0)             // 최고의 플레이 ~!
 				{
 					PlaySound(MAKEINTRESOURCE(IDR_WAVE14), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
 				}
 
 				best->showStartPos(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
-				
+
 				best->showReplay(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
-			
+
 			}
 
 
@@ -801,11 +982,11 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			// question: isFinishTurn() 이 true 가 되는 시점이 정확히 언제인가?
 			bool isTurnChange = true;
 			bool hasCollided[4];
-			for (int i = 0; i < 4; i++){
+			for (int i = 0; i < 4; i++) {
 				hasCollided[i] = currentBall->getHasCollided(i);
 			}
 			game->onTurnEnd(currentBall->getIndex(), hasCollided, isTurnChange);
-			if (isTurnChange == true){
+			if (isTurnChange == true) {
 				//::MessageBox(0, "changeBall", 0, 0);
 				changeBall();
 
@@ -816,130 +997,270 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			}
 
-		
 		}
+		
 		switch (msg) {
+
 		case WM_DESTROY:
 		{
-						   ::PostQuitMessage(0);
-						   break;
+			::PostQuitMessage(0);
+			break;
 		}
 		case WM_KEYDOWN:
 		{
-						   switch (wParam) {
-						   case VK_ESCAPE:
-							   ::DestroyWindow(hwnd);
-							   break;
-						   case VK_RETURN:
-							   if (NULL != Device) {
-								   wire = !wire;
-								   Device->SetRenderState(D3DRS_FILLMODE,
-									   (wire ? D3DFILL_WIREFRAME : D3DFILL_SOLID));
-							   }
-							   break;
-						   case VK_F1:
-							   best->showStartPos(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
-							   break;
-						   case VK_F2:
-							   best->showReplay(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
-							   break;
-						   case VK_SPACE:
-							   if (everyBallVelocity.isZero()){
-								   // 출발 상태 저장
-								   best->saveLastStatus(d3d::getTimeGap(), g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
+			switch (wParam) {
+			case VK_TAB:		//주현 Tap 누르면 첫화면
+				State = 0;
+				if (Sound == 0)                        // 빌리 윌리!
+				{
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE10), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
+				}
+				break;
 
-								   VK_SPACE_interrupt = true;
+			case VK_ESCAPE:
+				::DestroyWindow(hwnd);
+				break;
+			case VK_RETURN:
+				if (NULL != Device) {
+					wire = !wire;
+					Device->SetRenderState(D3DRS_FILLMODE,
+						(wire ? D3DFILL_WIREFRAME : D3DFILL_SOLID));
+				}
+				break;
+			case VK_F1:
+				best->showStartPos(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+				break;
+			case VK_F2:
+				best->showReplay(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+				break;
+			case VK_SPACE:
+				if (everyBallVelocity.isZero()) {
+					// 출발 상태 저장
+					best->saveLastStatus(d3d::getTimeGap(), g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
 
-								   //CSphere * currentBall;
-								   //현재 공이 빨간공 두개만 맞췄을 경우가 아니면 공을 바꾼다
-								   if (currentBall->getHasCollided(0) && currentBall->getHasCollided(1) && !currentBall->getHasCollided(2) && !currentBall->getHasCollided(3)) {
+					VK_SPACE_interrupt = true;
 
-								   }
-								   else {
-									   // mingyu 가 지웠어요!
-									   // changeBall();
-									   
-								   }
-								   D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
-								   D3DXVECTOR3	currentpos = currentBall->getCenter();
+					//CSphere * currentBall;
+					//현재 공이 빨간공 두개만 맞췄을 경우가 아니면 공을 바꾼다
+					if (currentBall->getHasCollided(0) && currentBall->getHasCollided(1) && !currentBall->getHasCollided(2) && !currentBall->getHasCollided(3)) {
 
-								   double theta = acos(sqrt(pow(targetpos.x - currentpos.x, 2)) / sqrt(pow(targetpos.x - currentpos.x, 2) +
-									   pow(targetpos.z - currentpos.z, 2)));		// 기본 1 사분면
-								   if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x >= 0) { theta = -theta; }	//4 사분면
-								   if (targetpos.z - currentpos.z >= 0 && targetpos.x - currentpos.x <= 0) { theta = PI - theta; } //2 사분면
-								   if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x <= 0){ theta = PI + theta; } // 3 사분면
-								   double distance = sqrt(pow(targetpos.x - currentpos.x, 2) + pow(targetpos.z - currentpos.z, 2));
-								   currentBall->setPower(distance * cos(theta), distance * sin(theta));
+					}
+					else {
+						// mingyu 가 지웠어요!
+						// changeBall();
 
-								   for (int i = 0; i < 4; i++) {
-									   for (int j = 0; j < 4; j++) {
-										   g_sphere[i].setHasCollided(j, false);
-									   }
-								   }
-								   // 이동 상태 저장 (Replay 용)
-								   best->saveCurStatus(d3d::getTimeGap(), g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
+					}
+					D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
+					D3DXVECTOR3	currentpos = currentBall->getCenter();
 
-								   break;
-							   }
-							   break;
-						   }
+					double theta = acos(sqrt(pow(targetpos.x - currentpos.x, 2)) / sqrt(pow(targetpos.x - currentpos.x, 2) +
+						pow(targetpos.z - currentpos.z, 2)));		// 기본 1 사분면
+					if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x >= 0) { theta = -theta; }	//4 사분면
+					if (targetpos.z - currentpos.z >= 0 && targetpos.x - currentpos.x <= 0) { theta = PI - theta; } //2 사분면
+					if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x <= 0) { theta = PI + theta; } // 3 사분면
+					double distance = sqrt(pow(targetpos.x - currentpos.x, 2) + pow(targetpos.z - currentpos.z, 2));
+					currentBall->setPower(distance * cos(theta), distance * sin(theta));
+
+					for (int i = 0; i < 4; i++) {
+						for (int j = 0; j < 4; j++) {
+							g_sphere[i].setHasCollided(j, false);
+						}
+					}
+					// 이동 상태 저장 (Replay 용)
+					best->saveCurStatus(d3d::getTimeGap(), g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
+
+					break;
+				}
+				break;
+			}
 		}
 
 
 		case WM_MOUSEMOVE:
 		{
-							 int new_x = LOWORD(lParam);
-							 int new_y = HIWORD(lParam);
-							 float dx;
-							 float dy;
+			int new_x = LOWORD(lParam);
+			int new_y = HIWORD(lParam);
+			float dx;
+			float dy;
 
-							 if (LOWORD(wParam) & MK_LBUTTON) {
+			if (LOWORD(wParam) & MK_LBUTTON) {
 
-								 if (isReset) {
-									 isReset = false;
-								 }
-								 else {
-									 D3DXVECTOR3 vDist;
-									 D3DXVECTOR3 vTrans;
-									 D3DXMATRIX mTrans;
-									 D3DXMATRIX mX;
-									 D3DXMATRIX mY;
+				if (isReset) {
+					isReset = false;
+				}
+				else {
+					D3DXVECTOR3 vDist;
+					D3DXVECTOR3 vTrans;
+					D3DXMATRIX mTrans;
+					D3DXMATRIX mX;
+					D3DXMATRIX mY;
 
-									 switch (move) {
-									 case WORLD_MOVE:
-										 dx = (old_x - new_x) * 0.01f;
-										 dy = (old_y - new_y) * 0.01f;
-										 D3DXMatrixRotationY(&mX, dx);
-										 D3DXMatrixRotationX(&mY, dy);
-										 g_mWorld = g_mWorld * mX * mY;
+					switch (move) {
+					case WORLD_MOVE:
+						dx = (old_x - new_x) * 0.01f;
+						dy = (old_y - new_y) * 0.01f;
+						D3DXMatrixRotationY(&mX, dx);
+						D3DXMatrixRotationX(&mY, dy);
+						g_mWorld = g_mWorld * mX * mY;
 
-										 break;
-									 }
-								 }
+						break;
+					}
+				}
 
-								 old_x = new_x;
-								 old_y = new_y;
+				old_x = new_x;
+				old_y = new_y;
 
-							 }
-							 else {
-								 isReset = true;
+			}
+			else {
+				isReset = true;
 
-								 if (LOWORD(wParam) & MK_RBUTTON) {
-									 dx = (old_x - new_x);// * 0.01f;
-									 dy = (old_y - new_y);// * 0.01f;
+				if (LOWORD(wParam) & MK_RBUTTON) {
+					dx = (old_x - new_x);// * 0.01f;
+					dy = (old_y - new_y);// * 0.01f;
 
-									 D3DXVECTOR3 coord3d = g_target_blueball.getCenter();
-									 g_target_blueball.setCenter(coord3d.x + dx*(-0.007f), coord3d.y, coord3d.z + dy*0.007f);
-								 }
-								 old_x = new_x;
-								 old_y = new_y;
+					D3DXVECTOR3 coord3d = g_target_blueball.getCenter();
+					g_target_blueball.setCenter(coord3d.x + dx*(-0.007f), coord3d.y, coord3d.z + dy*0.007f);
+				}
+				old_x = new_x;
+				old_y = new_y;
 
-								 move = WORLD_MOVE;
-							 }
-							 break;
+				move = WORLD_MOVE;
+			}
+			break;
 		}
-		}
+		case WM_LBUTTONDOWN:
+			if (State == 0)
+			{
+				int new_x = LOWORD(lParam);
+				int new_y = HIWORD(lParam);
+				if (pow(new_x - 180, 2) + pow(new_y - 450, 2) <= 3600)
+				{
+					//Game Mode 1
+					D3DXVECTOR3 pos(0.0f, 7, -8);
+					D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+					D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+					D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
 
+					Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+					// Set the projection matrix.
+					D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.5,
+						(float)Width / (float)Height, 1.f, 10000.0f);
+					Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+					State = 1;
+				}
+				if (pow(new_x - 380, 2) + pow(new_y - 450, 2) <= 3600)
+				{
+					//Game Mode 2
+					D3DXVECTOR3 pos(0.0f, 7, -8);
+					D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+					D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+					D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+
+					Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+					// Set the projection matrix.
+					D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.5,
+						(float)Width / (float)Height, 1.f, 10000.0f);
+					Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+					State = 2;
+
+				}
+				if (pow(new_x - 580, 2) + pow(new_y - 450, 2) <= 3600)
+				{
+					//Game Mode 3
+					D3DXVECTOR3 pos(0.0f, 7, -8);
+					D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+					D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+					D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+
+					Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+					// Set the projection matrix.
+					D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.5,
+						(float)Width / (float)Height, 1.f, 10000.0f);
+					Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+					State = 3;
+
+				}
+				if (pow(new_x - 780, 2) + pow(new_y - 450, 2) <= 3600)
+				{
+					//Game Mode 4
+					D3DXVECTOR3 pos(0.0f, 7, -8);
+					D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+					D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+					D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+
+					Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+					// Set the projection matrix.
+					D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.5,
+						(float)Width / (float)Height, 1.f, 10000.0f);
+					Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+					State = 4;
+
+				}
+
+				if (pow(new_x - 280, 2) + pow(new_y - 550, 2) <= 3600)
+				{
+					//Ranking
+					D3DXVECTOR3 pos(0.0f, 7, -8);
+					D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+					D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+					D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+
+					Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+					// Set the projection matrix.
+					D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.5,
+						(float)Width / (float)Height, 1.f, 10000.0f);
+					Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+					State = 5;
+
+				}
+				if (pow(new_x - 480, 2) + pow(new_y - 550, 2) <= 3600)
+				{
+					//Help
+					D3DXVECTOR3 pos(0.0f, 7, -8);
+					D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+					D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+					D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+
+					Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+					// Set the projection matrix.
+					D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.5,
+						(float)Width / (float)Height, 1.f, 10000.0f);
+					Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+					State = 6;
+
+				}
+				if (pow(new_x - 680, 2) + pow(new_y - 550, 2) <= 3600)
+				{
+					//Sound
+					D3DXVECTOR3 pos(0.0f, 7, -8);
+					D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+					D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+					D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+
+					Device->SetTransform(D3DTS_VIEW, &g_mView);
+
+					// Set the projection matrix.
+					D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.5,
+						(float)Width / (float)Height, 1.f, 10000.0f);
+					Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+					if (Sound == 0) {
+						Sound = 1;
+					}
+					else {
+						Sound = 0;
+					}
+				}
+
+				break;
+			}
+
+		}
 		return ::DefWindowProc(hwnd, msg, wParam, lParam);
 	}
 
@@ -967,7 +1288,6 @@ int WINAPI WinMain(HINSTANCE hinstance,
 	{
 		PlaySound(MAKEINTRESOURCE(IDR_WAVE10), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
 	}
-		
 
 
 	d3d::EnterMsgLoop(Display);

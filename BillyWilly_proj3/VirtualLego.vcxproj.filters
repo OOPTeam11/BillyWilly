@@ -53,6 +53,18 @@
     <ClInclude Include="bestPlay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="C3DText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ctext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Define.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VirtualLego.rc">
