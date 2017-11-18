@@ -41,7 +41,7 @@ public:
 	bool CSphere::deductScore(CSphere &ball);
 	void CSphere::sethit_count(int num);
 	int CSphere::gethit_count();
-
+	void setVelocity(float velocity_x, float velocity_z);
 
 private:
 	D3DXMATRIX              m_mLocal;

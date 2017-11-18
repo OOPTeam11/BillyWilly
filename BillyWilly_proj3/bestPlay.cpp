@@ -17,34 +17,17 @@ void bestPlay::saveLastStatus(float timeDelta, CSphere *g_sphere, CWall *g_legow
 	this->last_g_light = g_light;
 }
 
-void bestPlay::saveCurStatus(float timeDelta, CSphere *g_sphere, CWall *g_legowall, CWall g_legoPlane, CSphere g_target_blueball, CLight g_light) {
-	this->curTimeDelta = timeDelta; 
-	for (int i = 0; i < 4; i++) {
-		this->cur_g_sphere[i] = g_sphere[i];
-		this->cur_g_legowall[i] = g_legowall[i];
-	}
-	this->cur_g_legoPlane = g_legoPlane;
-	this->cur_g_target_blueball = g_target_blueball;
-	this->cur_g_light = g_light;
-}
-void bestPlay::getLastStatus(CSphere *g_sphere, CWall *g_legowall, CWall *g_legoPlane, CSphere *g_target_blueball, CLight *g_light){
-	for (int i = 0; i < 4; i++) {
-		g_sphere[i] = this->last_g_sphere[i];
-		g_legowall[i] = this->last_g_legowall[i];
-	}
-	*g_legoPlane = this->last_g_legoPlane;
-	*g_target_blueball = this->last_g_target_blueball;
-	*g_light = this->last_g_light;
+void bestPlay::savePower(float m_velocity_x, float m_velocity_z) {
+	this->m_velocity_x = m_velocity_x;
+	this->m_velocity_z = m_velocity_z;
 }
 
-void bestPlay::getCurStatus(CSphere	*g_sphere, CWall *g_legowall, CWall *g_legoPlane, CSphere *g_target_blueball, CLight *g_light){
-	for (int i = 0; i < 4; i++) {
-		g_sphere[i] = this->cur_g_sphere[i];
-		g_legowall[i] = this->cur_g_legowall[i];
-	}
-	*g_legoPlane = this->cur_g_legoPlane;
-	*g_target_blueball = this->cur_g_target_blueball;
-	*g_light = this->cur_g_light;
+float bestPlay::getVelocity_X() {
+	return m_velocity_x;
+}
+
+float bestPlay::getVelocity_Z() {
+	return m_velocity_z;
 }
 
 void bestPlay::showStartPos(IDirect3DDevice9** Device, D3DXMATRIX* g_mWorld, CSphere	*g_sphere, CWall *g_legowall, CWall *g_legoPlane, CSphere *g_target_blueball, CLight *g_light) {

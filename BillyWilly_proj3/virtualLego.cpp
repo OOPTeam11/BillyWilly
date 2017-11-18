@@ -360,6 +360,10 @@ int CSphere::gethit_count()              // hit_count를 get하는 함수!
 	return (this->hit_count);
 }
 
+void CSphere::setVelocity(float velocity_x, float velocity_z) {
+	this->m_velocity_x = velocity_x;
+	this->m_velocity_z = velocity_z;
+}
 
 
 
@@ -1257,9 +1261,8 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				}
 
 				best->showStartPos(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+				currentBall->setVelocity(best->getVelocity_X(), best->getVelocity_Z());
 
-				best->showReplay(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
-				
 				game->addPlayerScore(game->getTurn(), -10);
 			}
 
@@ -1305,7 +1308,8 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				best->showStartPos(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
 				break;
 			case VK_F2:
-				best->showReplay(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
+				currentBall->setVelocity(best->getVelocity_X(), best->getVelocity_Z());
+				best;
 				break;
 			case VK_SPACE:
 				if (everyBallVelocity.isZero()) {
@@ -1335,14 +1339,15 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					double distance = sqrt(pow(targetpos.x - currentpos.x, 2) + pow(targetpos.z - currentpos.z, 2));
 					currentBall->setPower(distance * cos(theta), distance * sin(theta));
 
+					// 이동 속도 저장 (Replay 용)
+					best->savePower(currentBall->getVelocity_X(), currentBall->getVelocity_Z());
+
 					for (int i = 0; i < 4; i++) {
 						for (int j = 0; j < 4; j++) {
 							g_sphere[i].setHasCollided(j, false);
 						}
 					}
-					// 이동 상태 저장 (Replay 용)
-					best->saveCurStatus(d3d::getTimeGap(), g_sphere, g_legowall, g_legoPlane, g_target_blueball, g_light);
-
+					
 					break;
 				}
 				break;
