@@ -39,6 +39,21 @@ bool CmpMode2(const Rank& a, const Rank& b){
 	return a.score < b.score;
 }
 
+bool ScoreManager::saveRank(){
+	ofstream rankFile("rank.txt");
+	if (rankFile.is_open() == true){
+		for (int mode = 0; mode < 2; mode++){
+			for (auto rank = rankData[mode].begin(); rank < rankData[mode].end(); rank++){
+				string str = rank->name + ":" + std::to_string(rank->mode) + ":" + std::to_string(rank->score) + "\n";
+				rankFile << str;
+			}
+		}
+	}
+	else {
+		return false;
+	}
+}
+
 bool ScoreManager::loadRank(){
 	ifstream rankFile("rank.txt");
 	if (rankFile.is_open()){ // 파일이 있을 경우

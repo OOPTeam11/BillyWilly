@@ -28,6 +28,8 @@ public:
 	// @return : vector<Rank> refrence type
 	vector<Rank>& getRankData(int mode);
 
+	bool saveRank();
+
 	
 
 private:
