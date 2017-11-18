@@ -26,6 +26,7 @@ bestPlay *best = new bestPlay();
 // mingyu part
 #include "Game.h"
 #include "ScoreManager.h"
+#include "DebugMessage.h"
 // mingyu part
 
 #include<Windows.h>                        // 소리 재생을 위한 헤더파일 !
@@ -84,7 +85,6 @@ int State = 0;  // 0은 처음화면(사운드에 따라 2화면) 1~4는 mode 1~
 
 // There are four balls
 // initialize the position (coordinate) of each ball (ball0 ~ ball3)
-//const float spherePos[4][2] = { { -2.7f, 0 }, { +2.4f, 0 }, { 3.3f, 0 }, { -2.7f, -0.9f } };
 const float spherePos[4][2] = { { -3.2f, 1.0f }, { -3.0f, 0.3f }, { 3.3f, 0 }, { 0, -1.5f } };
 // initialize the color of each ball (ball0 ~ ball3)
 const D3DXCOLOR sphereColor[4] = { d3d::RED, d3d::RED, d3d::YELLOW, d3d::WHITE };
@@ -613,8 +613,25 @@ double g_camera_pos[3] = { 0.0, 5.0, -8.0 };
 // -----------------------------------------------------------------------------
 
 // mingyu part
+void InitGame(){
+
+	// game 객체 초기화
+	delete game;
+	game = new Game();
+
+	// best 객체 초기화
+	delete best;
+	best = new bestPlay();
+
+	for (int i = 0; i < 4; i++){
+		g_sphere[i].setCenter(spherePos[i][0], g_sphere[i].getCenter().y, spherePos[i][1]);
+		g_sphere[i].sethit_count(0);
+	}
+}
+
 void GameEndCallBack(int player){
 	OutputDebugString("GameEnd");
+	InitGame();
 }
 // mingyu part
 
@@ -1259,6 +1276,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				{
 					PlaySound(MAKEINTRESOURCE(IDR_WAVE10), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
 				}
+				InitGame();
 				break;
 
 			case VK_ESCAPE:
