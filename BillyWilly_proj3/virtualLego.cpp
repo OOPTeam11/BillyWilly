@@ -1248,8 +1248,8 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			}
 
-			// 빨간 공 두개를 맞추고나서 세번째로 벽을 쳤을 경우 제외
-			if (best->threeCushion() && !isGameEnd) {
+			// 빨간 공 두개를 맞추고나서 세번째로 벽을 쳤을 경우 제외. 노란공을 치지 않았을 경우
+			if (best->threeCushion() && !isGameEnd && currentBall->getHasCollided(3) == false && currentBall->getHasCollided(4) == false) {
 
 				if (Sound == 0)             // 최고의 플레이 ~!
 				{
@@ -1259,7 +1259,8 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				best->showStartPos(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
 
 				best->showReplay(&Device, &g_mWorld, g_sphere, g_legowall, &g_legoPlane, &g_target_blueball, &g_light);
-
+				
+				game->addPlayerScore(game->getTurn(), -10);
 			}
 
 

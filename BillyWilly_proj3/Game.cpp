@@ -201,7 +201,7 @@ void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChan
 	int mode = this->getMode();
 	if (mode == MODE_1){ // 모드 1인 경우
 		clock_t current = clock();
-		GameTime[GameTurn] += current - this->StartTime;
+		GameTime[GameTurn] += (current - this->StartTime)/CLOCKS_PER_SEC;
 		this->StartTime = clock();
 		if (GameTime[GameTurn] >= MAX_TIME){ // 시간을 넘기면 엔딩
 			isGameEnd = true;
