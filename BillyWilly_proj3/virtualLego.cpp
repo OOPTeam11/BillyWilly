@@ -610,10 +610,18 @@ double g_camera_pos[3] = { 0.0, 5.0, -8.0 };
 
 // mingyu part
 void InitGame(){
+
+	// game 객체 초기화
 	delete game;
 	game = new Game();
+
+	// best 객체 초기화
+	delete best;
+	best = new bestPlay();
+
 	for (int i = 0; i < 4; i++){
 		g_sphere[i].setCenter(spherePos[i][0], g_sphere[i].getCenter().y, spherePos[i][1]);
+		g_sphere[i].sethit_count(0);
 	}
 }
 
@@ -1175,6 +1183,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				{
 					PlaySound(MAKEINTRESOURCE(IDR_WAVE10), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
 				}
+				InitGame();
 				break;
 
 			case VK_ESCAPE:
