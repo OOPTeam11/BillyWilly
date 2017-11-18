@@ -123,5 +123,5 @@ private:
 	int MaxTime = MAX_TIME;
 	int MaxScore = MAX_SCORE;
 
-	void* endCallBack(int winner);
+	void (*endCallBack)(int);
 };

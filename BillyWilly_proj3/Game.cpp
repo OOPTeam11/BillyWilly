@@ -140,7 +140,7 @@ void Game::setPlayerTime(int Player, int Time){
 //                     이벤트 관련 
 // ===========================================================
 
-void Game::registerEndCallBack(void function(int winner)){
+void Game::registerEndCallBack(void function(int)){
 	this->endCallBack = function;
 }
 
