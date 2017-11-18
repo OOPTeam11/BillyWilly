@@ -1,6 +1,6 @@
 #pragma once
 #include "ScoreManager.h"
-
+#include "virtualLego.h"
 using namespace std;
 
 ScoreManager* ScoreManager::instance = nullptr;
@@ -45,9 +45,12 @@ bool ScoreManager::saveRank(){
 		for (int mode = 0; mode < 2; mode++){
 			for (auto rank = rankData[mode].begin(); rank < rankData[mode].end(); rank++){
 				string str = rank->name + ":" + std::to_string(rank->mode) + ":" + std::to_string(rank->score) + "\n";
+				OutputDebugString(str.c_str());
 				rankFile << str;
 			}
+			rankFile.close();
 		}
+		return true;
 	}
 	else {
 		return false;
@@ -86,6 +89,10 @@ int ScoreManager::addRank(string name, int mode, int score){
 	Rank rank(name, mode, score);
 	if (mode == MODE_1){
 		int index = 0;
+		if (rankData[mode].size() == 0){
+			rankData[mode].insert(rankData[mode].begin() + index, rank);
+			return index;
+		}
 		for (auto i = rankData[mode].begin(); i < rankData[mode].end(); i++){
 			if (i->score < score){
 				vector<Rank>::iterator it;
@@ -99,6 +106,10 @@ int ScoreManager::addRank(string name, int mode, int score){
 	}
 	else if (mode == MODE_2){
 		int index = 0;
+		if (rankData[mode].size() == 0){
+			rankData[mode].insert(rankData[mode].begin() + index, rank);
+			return index;
+		}
 		for (auto i = rankData[mode].begin(); i < rankData[mode].end(); i++){
 			if (i->score < score){
 				vector<Rank>::iterator it;

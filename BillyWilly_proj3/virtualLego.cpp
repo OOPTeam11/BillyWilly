@@ -615,8 +615,8 @@ void InitGame(){
 	game->init();
 
 	// best 객체 초기화
-	delete best;
-	best = new bestPlay();
+	//delete best;
+	//best = new bestPlay();
 
 	for (int i = 0; i < 4; i++){
 		g_sphere[i].setCenter(spherePos[i][0], g_sphere[i].getCenter().y, spherePos[i][1]);
@@ -625,6 +625,15 @@ void InitGame(){
 }
 
 void GameEndCallBack(int player){
+	if (game->getMode() == MODE_1){
+		ScoreManager::getInstance()->addRank("default", MODE_1, game->getPlayerScore(PLAYER1));
+		if (ScoreManager::getInstance()->saveRank() == true){
+			Debug("Save Complete!");
+		}
+		else {
+			Debug("Save Fail...");
+		}
+	}
 	OutputDebugString("GameEnd");
 	InitGame();
 }
@@ -1126,8 +1135,30 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		if (everyBallVelocity.isFinishTurn()) {
 
 			//::MessageBox(0, "isFinishTurn", 0, 0);
+			
+			// mingyu part
+			// question: isFinishTurn() 이 true 가 되는 시점이 정확히 언제인가?
+			bool isTurnChange = true;
+			bool isGameEnd = false;
+			bool hasCollided[4];
+			for (int i = 0; i < 4; i++) {
+				hasCollided[i] = currentBall->getHasCollided(i);
+			}
+			game->onTurnEnd(currentBall->getIndex(), hasCollided, isTurnChange, isGameEnd);
+			if (isTurnChange == true) {
+				//::MessageBox(0, "changeBall", 0, 0);
+				changeBall();
+
+				if (currentBall->getIndex() == 3 && Sound == 0)                  // 바뀐 공이 흰색이면 ! 마이턴 ! 1 ~ 4 모드 !
+				{
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE1), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
+				}
+				
+
+			}
+
 			// 빨간 공 두개를 맞추고나서 세번째로 벽을 쳤을 경우 제외
-			if (best->threeCushion()) {
+			if (best->threeCushion() && !isGameEnd) {
 
 				if (Sound == 0)             // 최고의 플레이 ~!
 				{
@@ -1143,25 +1174,6 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			for (int i = 0; i < best->cusionCount.size(); i++) {
 				best->cusionCount[i] = 0;
-			}
-
-			// mingyu part
-			// question: isFinishTurn() 이 true 가 되는 시점이 정확히 언제인가?
-			bool isTurnChange = true;
-			bool hasCollided[4];
-			for (int i = 0; i < 4; i++) {
-				hasCollided[i] = currentBall->getHasCollided(i);
-			}
-			game->onTurnEnd(currentBall->getIndex(), hasCollided, isTurnChange);
-			if (isTurnChange == true) {
-				//::MessageBox(0, "changeBall", 0, 0);
-				changeBall();
-
-				if (currentBall->getIndex() == 3 && Sound == 0)                  // 바뀐 공이 흰색이면 ! 마이턴 ! 1 ~ 4 모드 !
-				{
-					PlaySound(MAKEINTRESOURCE(IDR_WAVE1), NULL, SND_RESOURCE | SND_ASYNC | SND_NOSTOP);
-				}
-
 			}
 
 		}

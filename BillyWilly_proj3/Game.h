@@ -106,7 +106,7 @@ public:
 	@args : currentBallIndex - 턴이 종료되기 전에 조종한 공의 index
 	        CollidedBalls - hasCollided 값을 가져옴
 	*/
-	void onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChange);
+	void onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChange, bool& isGameEnd);
 	void registerEndCallBack(void function(int winner));
 
 private:

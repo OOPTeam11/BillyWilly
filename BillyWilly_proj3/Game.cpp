@@ -152,7 +152,7 @@ void Game::onGameStart(){
 	}
 }
 
-void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChange){
+void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChange, bool& isGameEnd){
 	
 	// 턴을 바꿀지 말지 결정하는 변수
 	isTurnChange = true;
@@ -204,6 +204,7 @@ void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChan
 		GameTime[GameTurn] += current - this->StartTime;
 		this->StartTime = clock();
 		if (GameTime[GameTurn] >= MAX_TIME){ // 시간을 넘기면 엔딩
+			isGameEnd = true;
 			this->endCallBack(GameTurn);
 		}
 	}
@@ -212,6 +213,7 @@ void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChan
 		GameTime[GameTurn] += current - this->StartTime;
 		this->StartTime = clock();
 		if (this->getPlayerScore(PLAYER1) >= MAX_SCORE) { // 점수를 넘기면 엔딩
+			isGameEnd = true;
 			this->endCallBack(GameTurn);
 		}
 	}
