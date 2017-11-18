@@ -14,6 +14,7 @@ using namespace std;
 class bestPlay{
 public:
 	bestPlay();
+	//
 	~bestPlay();
 	void saveLastStatus(float timeDelta, CSphere *g_sphere, CWall *g_legowall, CWall g_legoPlane, CSphere g_target_blueball, CLight g_light); // 스페이스바가 눌리면 출발할 때의 4개의 공 상태 저장.
 	void savePower(float m_velocity_x, float m_velocity_z); //

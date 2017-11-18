@@ -78,6 +78,7 @@ CText Help[5];
 CText Player1[2];
 CText Player2[2];
 Rect Plane;
+CText RANK[5];
 int State = 0;  // 0은 처음화면(사운드에 따라 2화면) 1~4는 mode 1~4 5는 rank 6은 도움말 
 
 //JuHyeon Part
@@ -746,6 +747,11 @@ bool Setup()
 	Player2[0].Init(Device, 27, 10, 700, "Airal");
 	Player2[1].Init(Device, 27, 10, 700, "Airal");
 
+	RANK[0].Init(Device, 27, 10, 700, "Airal");
+	RANK[1].Init(Device, 27, 10, 700, "Airal");
+	RANK[2].Init(Device, 27, 10, 700, "Airal");
+	RANK[3].Init(Device, 27, 10, 700, "Airal");
+	RANK[4].Init(Device, 27, 10, 700, "Airal");
 
 	Ball[0].InitVB(Device, 180, 450, 60, d3d::RED);
 	Ball[1].InitVB(Device, 380, 450, 60, d3d::RED);
@@ -1155,6 +1161,48 @@ bool Display(float timeDelta)
 			(float)Width / (float)Height, 0.f, 10000.0f);
 		Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
 
+		string filename = "rank.txt";
+		ifstream myfile(filename);
+		string line;
+		char RANK1[30] = { NULL };
+		char RANK2[30] = { NULL };
+		char RANK3[30] = { NULL };
+		char RANK4[30] = { NULL };
+		char type[10] = { NULL };
+		char score[10] = { NULL };
+		char* lines;
+		int tp;
+		int iii = 0;
+		if (myfile.is_open()) {
+			while (getline(myfile, line) || iii<4) {
+				lines = (char*)line.c_str();
+				if (iii == 0) {
+					strcpy_s(RANK1, lines);
+				}
+				if (iii == 1) {
+					strcpy_s(RANK2, lines);
+				}
+				if (iii == 2) {
+					strcpy_s(RANK3, lines);
+				}
+				if (iii == 3) {
+					strcpy_s(RANK4, lines);
+				}
+				iii++;
+			}
+			RANK[4].Print("1.", 100, 220, d3d::WHITE);
+			RANK[4].Print("2.", 100, 340, d3d::WHITE);
+			RANK[4].Print("3.", 100, 460, d3d::WHITE);
+			RANK[4].Print("4.", 100, 580, d3d::WHITE);
+			RANK[0].Print(RANK1, 150, 220, d3d::WHITE);
+			RANK[1].Print(RANK2, 150, 340, d3d::WHITE);
+			RANK[2].Print(RANK3, 150, 460, d3d::WHITE);
+			RANK[3].Print(RANK4, 150, 580, d3d::WHITE);
+
+		}
+		RANK[4].Print("RANKING", 100, 100, d3d::BLUE);
+		myfile.close();
+
 		Device->EndScene();
 		Device->Present(0, 0, 0, 0);
 		Device->SetTexture(0, NULL);
@@ -1489,6 +1537,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
 
 					Device->SetTransform(D3DTS_VIEW, &g_mView);
+
 
 					// Set the projection matrix.
 					D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.5,
