@@ -8,7 +8,7 @@
 // Originally programmed for Virtual LEGO. 
 // Modified later to program for Virtual Billiard.
 //        
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 #pragma once
 
 #include "virtualLego.h"
@@ -871,25 +871,154 @@ bool Display(float timeDelta)
 			//mingyu part
 		}
 	}
-	else if (State == 2) { //게임모드 2 주현
+	else if (State == 2) { //게임모드 2 주현 민규가 대신 채워 넣음
 
 		// mingyu part
 		game->setMode(MODE_2);
 		// mingyu part
+
+
+		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
+		Device->BeginScene();
+
+		// update the position of each ball. during update, check whether each ball hit by walls.
+		for (i = 0; i < 4; i++) {
+			g_sphere[i].ballUpdate(timeDelta);
+			for (j = 0; j < 4; j++) { g_legowall[i].hitBy(g_sphere[j]); }
+		}
+
+		// check whether any two balls hit together and update the direction of balls
+		for (i = 0; i < 4; i++) {
+			for (j = 0; j < 4; j++) {
+				if (i < j)
+					g_sphere[i].hitBy(g_sphere[j]);
+			}
+		}
+
+		// draw plane, walls, and spheres
+		g_legoPlane.draw(Device, g_mWorld);
+		for (i = 0; i < 4; i++) {
+			g_legowall[i].draw(Device, g_mWorld);
+			g_sphere[i].draw(Device, g_mWorld);
+		}
+		g_target_blueball.draw(Device, g_mWorld);
+		g_light.draw(Device);
+
+		IDirect3DDevice9* g_pd3dDevice;
+		//ID3DXLine* g_pLine;
+		//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
+		//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
+		//D3DXVECTOR3 lines[] = { currentBall->getCenter(), g_target_blueball.getCenter() };
+
+		Device->EndScene();
+		Device->Present(0, 0, 0, 0);
+		Device->SetTexture(0, NULL);
+
+		//mingyu part -debug
+		//const char str[100] = "";;
+		string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
+		OutputDebugString(str.c_str());
+		//mingyu part
 		
 	}
-	else if (State == 3) { //게임모드 3 주현
+	else if (State == 3) { //게임모드 3 주현 민규가 대신 채워 넣음
 
 		// mingyu part
 		game->setMode(MODE_3);
 		// mingyu part
 
+
+		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
+		Device->BeginScene();
+
+		// update the position of each ball. during update, check whether each ball hit by walls.
+		for (i = 0; i < 4; i++) {
+			g_sphere[i].ballUpdate(timeDelta);
+			for (j = 0; j < 4; j++) { g_legowall[i].hitBy(g_sphere[j]); }
+		}
+
+		// check whether any two balls hit together and update the direction of balls
+		for (i = 0; i < 4; i++) {
+			for (j = 0; j < 4; j++) {
+				if (i < j)
+					g_sphere[i].hitBy(g_sphere[j]);
+			}
+		}
+
+		// draw plane, walls, and spheres
+		g_legoPlane.draw(Device, g_mWorld);
+		for (i = 0; i < 4; i++) {
+			g_legowall[i].draw(Device, g_mWorld);
+			g_sphere[i].draw(Device, g_mWorld);
+		}
+		g_target_blueball.draw(Device, g_mWorld);
+		g_light.draw(Device);
+
+		IDirect3DDevice9* g_pd3dDevice;
+		//ID3DXLine* g_pLine;
+		//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
+		//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
+		//D3DXVECTOR3 lines[] = { currentBall->getCenter(), g_target_blueball.getCenter() };
+
+		Device->EndScene();
+		Device->Present(0, 0, 0, 0);
+		Device->SetTexture(0, NULL);
+
+		//mingyu part -debug
+		//const char str[100] = "";;
+		string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
+		OutputDebugString(str.c_str());
+		//mingyu part
+
 	}
-	else if (State == 4) { //게임모드 4 주현
+	else if (State == 4) { //게임모드 4 주현 민규가 대신 채워 넣음
 
 		// mingyu part
 		game->setMode(MODE_PRACTICE);
 		// mingyu part
+
+
+		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
+		Device->BeginScene();
+
+		// update the position of each ball. during update, check whether each ball hit by walls.
+		for (i = 0; i < 4; i++) {
+			g_sphere[i].ballUpdate(timeDelta);
+			for (j = 0; j < 4; j++) { g_legowall[i].hitBy(g_sphere[j]); }
+		}
+
+		// check whether any two balls hit together and update the direction of balls
+		for (i = 0; i < 4; i++) {
+			for (j = 0; j < 4; j++) {
+				if (i < j)
+					g_sphere[i].hitBy(g_sphere[j]);
+			}
+		}
+
+		// draw plane, walls, and spheres
+		g_legoPlane.draw(Device, g_mWorld);
+		for (i = 0; i < 4; i++) {
+			g_legowall[i].draw(Device, g_mWorld);
+			g_sphere[i].draw(Device, g_mWorld);
+		}
+		g_target_blueball.draw(Device, g_mWorld);
+		g_light.draw(Device);
+
+		IDirect3DDevice9* g_pd3dDevice;
+		//ID3DXLine* g_pLine;
+		//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
+		//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
+		//D3DXVECTOR3 lines[] = { currentBall->getCenter(), g_target_blueball.getCenter() };
+
+		Device->EndScene();
+		Device->Present(0, 0, 0, 0);
+		Device->SetTexture(0, NULL);
+
+		//mingyu part -debug
+		//const char str[100] = "";;
+		string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
+		OutputDebugString(str.c_str());
+		//mingyu part
 
 	}
 	else if (State == 5) { // 랭킹 볼수있는 화면 주현
