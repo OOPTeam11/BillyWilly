@@ -73,6 +73,7 @@ Circle Ball[8];
 C3DText intro;
 C3DText intro2;
 CText Mode[8];
+CText Help[5];
 int State = 0;  // 0은 처음화면(사운드에 따라 2화면) 1~4는 mode 1~4 5는 rank 6은 도움말 
 
 //JuHyeon Part
@@ -702,6 +703,13 @@ bool Setup()
 	Mode[6].Init(Device, 27, 10, 700, "Airal");
 	Mode[7].Init(Device, 27, 10, 700, "Airal");
 
+	Help[0].Init(Device, 27, 10, 700, "Airal");
+	Help[1].Init(Device, 27, 10, 700, "Airal");
+	Help[2].Init(Device, 27, 10, 700, "Airal");
+	Help[3].Init(Device, 27, 10, 700, "Airal");
+	Help[4].Init(Device, 27, 10, 700, "Airal");
+
+
 	Ball[0].InitVB(Device, 180, 450, 60, d3d::RED);
 	Ball[1].InitVB(Device, 380, 450, 60, d3d::RED);
 	Ball[2].InitVB(Device, 580, 450, 60, d3d::RED);
@@ -1065,6 +1073,13 @@ bool Display(float timeDelta)
 		D3DXMatrixPerspectiveFovLH(&g_mProj, D3DX_PI / 3.2,
 			(float)Width / (float)Height, 0.f, 10000.0f);
 		Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
+
+		Mode[0].Print("1. 모드1 : 정해진 시간동안 최대한 많은 점수를 내는 모드(1인용)", 100, 220, d3d::BLUE);
+		Mode[1].Print("2. 모드2 : 정해진 점수를 가장 빠르게 도달하는 모드(1인용)", 100, 340, d3d::BLUE);
+		Mode[2].Print("3. 모드3 : 2인용 모드, 2인이서 4구를 제한없이 점수만 내며 즐기는 모드", 100, 460, d3d::BLUE);
+		Mode[3].Print("4. 연습 모드 : 시간 상관 없이 즐기는 모드. 점수는 매겨진다.(1인용)", 100, 580, d3d::BLUE);
+		Mode[4].Print("How To Play BillyWilly!", 100, 100, d3d::WHITE);
+
 
 		Device->EndScene();
 		Device->Present(0, 0, 0, 0);
