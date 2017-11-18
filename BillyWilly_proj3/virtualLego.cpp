@@ -824,6 +824,10 @@ bool Display(float timeDelta)
 	else if (State == 1) { //게임모드 1 주현
 		if (Device)
 		{
+			// mingyu part
+			game->setMode(MODE_1);
+			// mingyu part
+
 			Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
 			Device->BeginScene();
 
@@ -868,12 +872,24 @@ bool Display(float timeDelta)
 		}
 	}
 	else if (State == 2) { //게임모드 2 주현
+
+		// mingyu part
+		game->setMode(MODE_2);
+		// mingyu part
 		
 	}
 	else if (State == 3) { //게임모드 3 주현
 
+		// mingyu part
+		game->setMode(MODE_3);
+		// mingyu part
+
 	}
 	else if (State == 4) { //게임모드 4 주현
+
+		// mingyu part
+		game->setMode(MODE_PRACTICE);
+		// mingyu part
 
 	}
 	else if (State == 5) { // 랭킹 볼수있는 화면 주현
