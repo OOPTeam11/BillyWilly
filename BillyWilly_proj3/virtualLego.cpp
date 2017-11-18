@@ -608,6 +608,11 @@ double g_camera_pos[3] = { 0.0, 5.0, -8.0 };
 // Functions
 // -----------------------------------------------------------------------------
 
+// mingyu part
+void GameEndCallBack(int player){
+	OutputDebugString("GameEnd");
+}
+// mingyu part
 
 void destroyAllLegoBlock(void)
 {
@@ -719,6 +724,7 @@ bool Setup()
 	if ((ScoreManager::getInstance())->loadRank() == false){
 		return false;
 	}
+	game->registerEndCallBack(GameEndCallBack);
 	// mingyu part
 
 	return true;

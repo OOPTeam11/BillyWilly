@@ -107,7 +107,7 @@ public:
 	        CollidedBalls - hasCollided °ªÀ» °¡Á®¿È
 	*/
 	void onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChange);
-	void registerEndCallBack(void* function(int winner));
+	void registerEndCallBack(void function(int winner));
 
 private:
 
