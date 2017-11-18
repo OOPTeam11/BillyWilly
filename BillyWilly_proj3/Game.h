@@ -14,7 +14,7 @@ Work : 게임 데이터가 담겨있는 클래스
 
 #include <time.h>
 
-#define MAX_TIME 180
+#define MAX_TIME 10
 #define MAX_SCORE 1000
 
 //1. 모드1 : 정해진 시간동안 최대한 많은 점수를 내는 모드(1인용)

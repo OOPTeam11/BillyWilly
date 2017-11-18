@@ -81,7 +81,6 @@ int State = 0;  // 0은 처음화면(사운드에 따라 2화면) 1~4는 mode 1~
 
 // There are four balls
 // initialize the position (coordinate) of each ball (ball0 ~ ball3)
-//const float spherePos[4][2] = { { -2.7f, 0 }, { +2.4f, 0 }, { 3.3f, 0 }, { -2.7f, -0.9f } };
 const float spherePos[4][2] = { { -3.2f, 1.0f }, { -3.0f, 0.3f }, { 3.3f, 0 }, { 0, -1.5f } };
 // initialize the color of each ball (ball0 ~ ball3)
 const D3DXCOLOR sphereColor[4] = { d3d::RED, d3d::RED, d3d::YELLOW, d3d::WHITE };
@@ -610,8 +609,17 @@ double g_camera_pos[3] = { 0.0, 5.0, -8.0 };
 // -----------------------------------------------------------------------------
 
 // mingyu part
+void InitGame(){
+	delete game;
+	game = new Game();
+	for (int i = 0; i < 4; i++){
+		g_sphere[i].setCenter(spherePos[i][0], g_sphere[i].getCenter().y, spherePos[i][1]);
+	}
+}
+
 void GameEndCallBack(int player){
 	OutputDebugString("GameEnd");
+	InitGame();
 }
 // mingyu part
 
