@@ -612,8 +612,7 @@ double g_camera_pos[3] = { 0.0, 5.0, -8.0 };
 void InitGame(){
 
 	// game 객체 초기화
-	delete game;
-	game = new Game();
+	game->init();
 
 	// best 객체 초기화
 	delete best;
