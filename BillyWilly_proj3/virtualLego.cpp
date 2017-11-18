@@ -26,6 +26,7 @@ bestPlay *best = new bestPlay();
 // mingyu part
 #include "Game.h"
 #include "ScoreManager.h"
+#include "DebugMessage.h"
 // mingyu part
 
 #include<Windows.h>                        // 소리 재생을 위한 헤더파일 !

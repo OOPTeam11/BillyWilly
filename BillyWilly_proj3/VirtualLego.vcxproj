@@ -142,6 +142,7 @@
     <ClInclude Include="C3DText.h" />
     <ClInclude Include="Ctext.h" />
     <ClInclude Include="d3dUtility.h" />
+    <ClInclude Include="DebugMessage.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Rank.h" />
