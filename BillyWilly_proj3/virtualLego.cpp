@@ -74,6 +74,9 @@ C3DText intro;
 C3DText intro2;
 CText Mode[8];
 CText Help[5];
+CText Player1[2];
+CText Player2[2];
+Rect Plane;
 int State = 0;  // 0은 처음화면(사운드에 따라 2화면) 1~4는 mode 1~4 5는 rank 6은 도움말 
 
 //JuHyeon Part
@@ -709,6 +712,11 @@ bool Setup()
 	Help[3].Init(Device, 27, 10, 700, "Airal");
 	Help[4].Init(Device, 27, 10, 700, "Airal");
 
+	Player1[0].Init(Device, 27, 10, 700, "Airal");
+	Player1[1].Init(Device, 27, 10, 700, "Airal");
+	Player2[0].Init(Device, 27, 10, 700, "Airal");
+	Player2[1].Init(Device, 27, 10, 700, "Airal");
+
 
 	Ball[0].InitVB(Device, 180, 450, 60, d3d::RED);
 	Ball[1].InitVB(Device, 380, 450, 60, d3d::RED);
@@ -718,6 +726,8 @@ bool Setup()
 	Ball[5].InitVB(Device, 480, 550, 60, d3d::BLUE);
 	Ball[6].InitVB(Device, 680, 550, 60, d3d::BLUE);
 	Ball[7].InitVB(Device, 680, 550, 60, d3d::RED);
+
+	Plane.InitVB(Device, 30, 30, 250, 150, d3d::YELLOW);
 	//Juhyeon Part
 
 
@@ -838,12 +848,15 @@ bool Display(float timeDelta)
 	else if (State == 1) { //게임모드 1 주현
 		if (Device)
 		{
+			
 			// mingyu part
 			game->setMode(MODE_1);
 			// mingyu part
 
 			Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
 			Device->BeginScene();
+
+
 
 			// update the position of each ball. during update, check whether each ball hit by walls.
 			for (i = 0; i < 4; i++) {
@@ -867,6 +880,23 @@ bool Display(float timeDelta)
 			}
 			g_target_blueball.draw(Device, g_mWorld);
 			g_light.draw(Device);
+			
+			Plane.Draw(Device);
+			char user1Score[10];
+		//	char user2Score[10];
+
+			char user1Name[100] = "Player1 : ";
+			itoa(game->getPlayerScore(PLAYER1), user1Score, 10);
+
+			strcat(user1Name, user1Score);
+		//	itoa(user[1].getStore() * 10, user2Score, 10);
+			
+			Player1[0].Print(user1Name, 75, 75, d3d::BLACK);
+	
+			
+			//		Player1[1].Print(Game::getPlayerScore(Player1), 650, 540, d3d::WHITE);
+	//		Player2[0].Print("Player2 : ", 650, 540, d3d::WHITE);
+	//		Player2[1].Print("MUTE", 650, 540, d3d::WHITE);
 
 			IDirect3DDevice9* g_pd3dDevice;
 			//ID3DXLine* g_pLine;
@@ -917,6 +947,18 @@ bool Display(float timeDelta)
 		}
 		g_target_blueball.draw(Device, g_mWorld);
 		g_light.draw(Device);
+
+		Plane.Draw(Device);
+		char user1Score[10];
+		//	char user2Score[10];
+
+		char user1Name[100] = "Player1 : ";
+		itoa(game->getPlayerScore(PLAYER1), user1Score, 10);
+
+		strcat(user1Name, user1Score);
+		//	itoa(user[1].getStore() * 10, user2Score, 10);
+
+		Player1[0].Print(user1Name, 75, 75, d3d::BLACK);
 
 		IDirect3DDevice9* g_pd3dDevice;
 		//ID3DXLine* g_pLine;
@@ -969,6 +1011,22 @@ bool Display(float timeDelta)
 		g_light.draw(Device);
 
 		IDirect3DDevice9* g_pd3dDevice;
+
+		Plane.Draw(Device);
+		char user1Score[10];
+		char user2Score[10];
+
+		char user1Name[100] = "Player1 : ";
+		char user2Name[100] = "Player2 : ";
+		itoa(game->getPlayerScore(PLAYER1), user1Score, 10);
+		itoa(game->getPlayerScore(PLAYER2), user2Score, 10);
+
+		strcat(user1Name, user1Score); strcat(user2Name, user2Score);
+		//	itoa(user[1].getStore() * 10, user2Score, 10);
+
+		Player1[0].Print(user1Name, 75, 50, d3d::BLACK);
+		Player2[0].Print(user2Name, 75, 95, d3d::BLACK);
+
 		//ID3DXLine* g_pLine;
 		//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
 		//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
@@ -1023,6 +1081,22 @@ bool Display(float timeDelta)
 		//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
 		//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
 		//D3DXVECTOR3 lines[] = { currentBall->getCenter(), g_target_blueball.getCenter() };
+
+		Plane.Draw(Device);
+		char user1Score[10];
+		char user2Score[10];
+
+		char user1Name[100] = "Player1 : ";
+		char user2Name[100] = "Player2 : ";
+		itoa(game->getPlayerScore(PLAYER1), user1Score, 10);
+		itoa(game->getPlayerScore(PLAYER2), user2Score, 10);
+
+		strcat(user1Name, user1Score); strcat(user2Name, user2Score);
+		//	itoa(user[1].getStore() * 10, user2Score, 10);
+
+		Player1[0].Print(user1Name, 75, 50, d3d::BLACK);
+		Player2[0].Print(user2Name, 75, 95, d3d::BLACK);
+
 
 		Device->EndScene();
 		Device->Present(0, 0, 0, 0);
@@ -1120,6 +1194,8 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		everyBallVelocity.setStatus(g_sphere);
 
+	//if(Game::endCallBack(PLAYER1))
+
 
 		// 턴 끝날때 호출되는 call back
 		if (everyBallVelocity.isFinishTurn()) {
@@ -1176,6 +1252,8 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			switch (wParam) {
 			case VK_TAB:		//주현 Tap 누르면 첫화면
+				Setup();
+				
 				State = 0;
 				if (Sound == 0)                        // 빌리 윌리!
 				{
