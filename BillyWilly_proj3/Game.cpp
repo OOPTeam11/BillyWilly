@@ -140,6 +140,10 @@ void Game::setPlayerTime(int Player, int Time){
 //                     이벤트 관련 
 // ===========================================================
 
+void Game::registerEndCallBack(void* function(int winner)){
+	this->endCallBack = function;
+}
+
 void Game::onGameStart(){
 
 	// 시간 측정 시작
@@ -191,18 +195,38 @@ void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChan
 	}
 
 	//
-	// 시간 관리
-	// virtualLego.cpp 에 추가할 필요가 있음.
-	if (this->getMode() == MODE_1){
+	// 게임 엔딩 관리
+	//
+
+	int mode = this->getMode();
+	if (mode == MODE_1){ // 모드 1인 경우
 		clock_t current = clock();
-		if ((current - this->StartTime)/CLOCKS_PER_SEC > MAX_TIME){
-			// Game End
+		GameTime[GameTurn] += current - this->StartTime;
+		this->StartTime = clock();
+		if (GameTime[GameTurn] >= MAX_TIME){ // 시간을 넘기면 엔딩
+			this->endCallBack(GameTurn);
 		}
+	}
+	else if (mode == MODE_2){
+		clock_t current = clock();
+		GameTime[GameTurn] += current - this->StartTime;
+		this->StartTime = clock();
+		if (this->getPlayerScore(PLAYER1) >= MAX_SCORE) { // 점수를 넘기면 엔딩
+			this->endCallBack(GameTurn);
+		}
+	}
+	else {
+		// 나머지 모드는 엔딩이 없다.
 	}
 
 	//
-	// 게임 엔딩 관리
-	// 논의가 필요함.
+	// 모드에 따른 공 바꾸는 이벤트
 	//
-
+	switch (this->getMode()){
+	case MODE_1:
+	case MODE_2:
+	case MODE_PRACTICE:
+		isTurnChange = false;
+		break;
+	}
 }

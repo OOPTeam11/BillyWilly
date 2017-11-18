@@ -107,6 +107,7 @@ public:
 	        CollidedBalls - hasCollided °ªÀ» °¡Á®¿È
 	*/
 	void onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChange);
+	void registerEndCallBack(void* function(int winner));
 
 private:
 
@@ -121,4 +122,6 @@ private:
 	clock_t StartTime;
 	int MaxTime = MAX_TIME;
 	int MaxScore = MAX_SCORE;
+
+	void* endCallBack(int winner);
 };
