@@ -872,8 +872,8 @@ bool Display(float timeDelta)
 
 			//mingyu part -debug
 			//const char str[100] = "";;
-			string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
-			OutputDebugString(str.c_str());
+			//string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
+			//OutputDebugString(str.c_str());
 			//mingyu part
 		}
 	}
@@ -922,8 +922,8 @@ bool Display(float timeDelta)
 
 		//mingyu part -debug
 		//const char str[100] = "";;
-		string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
-		OutputDebugString(str.c_str());
+		//string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
+		//OutputDebugString(str.c_str());
 		//mingyu part
 		
 	}
@@ -972,8 +972,8 @@ bool Display(float timeDelta)
 
 		//mingyu part -debug
 		//const char str[100] = "";;
-		string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
-		OutputDebugString(str.c_str());
+		//string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
+		//OutputDebugString(str.c_str());
 		//mingyu part
 
 	}
@@ -1022,8 +1022,8 @@ bool Display(float timeDelta)
 
 		//mingyu part -debug
 		//const char str[100] = "";;
-		string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
-		OutputDebugString(str.c_str());
+		//string str = "v_x:" + std::to_string(currentBall->getVelocity_X()) + ", v_z:" + std::to_string(currentBall->getVelocity_Z()) + "\n";
+		//OutputDebugString(str.c_str());
 		//mingyu part
 
 	}

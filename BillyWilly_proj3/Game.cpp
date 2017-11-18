@@ -215,9 +215,7 @@ void Game::onTurnEnd(int currentBallIndex, bool hasCollided[4], bool& isTurnChan
 			this->endCallBack(GameTurn);
 		}
 	}
-	else {
-		// 나머지 모드는 엔딩이 없다.
-	}
+	else { /*나머지 모드는 엔딩이 없다.*/	}
 
 	//
 	// 모드에 따른 공 바꾸는 이벤트
