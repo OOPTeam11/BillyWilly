@@ -793,6 +793,120 @@ void Cleanup(void)
 	g_light.destroy();
 }
 
+void drawLine_J(){
+
+	D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
+	D3DXVECTOR3	currentpos = currentBall->getCenter();
+	D3DXVECTOR3	red1pos = g_sphere[0].getCenter();
+	D3DXVECTOR3	red2pos = g_sphere[1].getCenter();
+	D3DXVECTOR3	anotherpos;
+	if (currentBall->getIndex() == g_sphere[2].getIndex())
+		anotherpos = g_sphere[3].getCenter();
+	else
+		anotherpos = g_sphere[2].getCenter();
+
+	int a = 1;
+	double theta = acos(sqrt(pow(targetpos.x - currentpos.x, 2)) / sqrt(pow(targetpos.x - currentpos.x, 2) +
+		pow(targetpos.z - currentpos.z, 2)));		// 기본 1 사분면
+	if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x >= 0) { theta = -theta; a = 4; }	//4 사분면
+	if (targetpos.z - currentpos.z >= 0 && targetpos.x - currentpos.x <= 0) { theta = PI - theta; a = 2; } //2 사분면
+	if (targetpos.z - currentpos.z <= 0 && targetpos.x - currentpos.x <= 0){ theta = PI + theta; a = 3; } // 3 사분면
+
+
+	D3DXVECTOR2 ballToThis(targetpos.x - currentpos.x, targetpos.z - currentpos.z);
+	D3DXVec2Normalize(&ballToThis, &ballToThis);
+
+	LPD3DXLINE pdxline;
+	D3DXCreateLine(Device, &pdxline);
+
+	pdxline->Begin();
+	D3DXVECTOR3 vLine[3];
+	D3DXVECTOR3 vPoint[3];
+	vPoint[0] = currentBall->getCenter();
+	vPoint[1] = g_target_blueball.getCenter();
+
+	D3DXVECTOR3 vViewPoint[3];
+
+	if (a == 1){
+		if ((currentpos.x + (3.02f - currentpos.z) / tan(theta)) <= 4.52){
+			vPoint[1].x = currentpos.x + ((3.02f - currentpos.z) / tan(theta));
+			vPoint[1].z = 3.02f;
+			vPoint[2] = vPoint[1];
+			vPoint[2].x += sin(PI / 2 - theta);
+			vPoint[2].z -= cos(PI / 2 - theta);
+		}
+		else{
+			vPoint[1].x = 4.52;
+			vPoint[1].z = currentpos.z + (4.52 - currentpos.x) * tan(theta);
+			vPoint[2] = vPoint[1];
+			vPoint[2].x -= cos(theta);
+			vPoint[2].z += sin(theta);
+		}
+	}
+	else if (a == 2){
+		if ((currentpos.x + (3.02f - currentpos.z) / tan(theta)) >= -4.52){
+			vPoint[1].x = currentpos.x + ((3.02f - currentpos.z) / tan(theta));
+			vPoint[1].z = 3.02f;
+			vPoint[2] = vPoint[1];
+			vPoint[2].x += sin(PI / 2 - theta);
+			vPoint[2].z -= cos(PI / 2 - theta);
+		}
+		else{
+			vPoint[1].x = -4.52;
+			vPoint[1].z = currentpos.z - (currentpos.x + 4.52) *tan(theta);
+			vPoint[2] = vPoint[1];
+			vPoint[2].x -= cos(theta);
+			vPoint[2].z += sin(theta);
+		}
+	}
+	else if (a == 3){
+		if ((currentpos.x - (currentpos.z + 3.02) / tan(theta)) >= -4.52){
+			vPoint[1].x = currentpos.x - (currentpos.z + 3.02) / tan(theta);
+			vPoint[1].z = -3.02;
+			vPoint[2] = vPoint[1];
+			vPoint[2].x += sin(PI / 2 - theta);
+			vPoint[2].z -= cos(PI / 2 - theta);
+		}
+		else {
+			vPoint[1].x = -4.52;
+			vPoint[1].z = currentpos.z - (currentpos.x + 4.52)*tan(theta);
+			vPoint[2] = vPoint[1];
+			vPoint[2].x -= cos(theta);
+			vPoint[2].z += sin(theta);
+		}
+	}
+	else if (a == 4){
+		if ((currentpos.x - (currentpos.z + 3.02) / tan(theta)) <= 4.52f){
+			vPoint[1].x = currentpos.x - (currentpos.z + 3.02) / tan(theta);
+			vPoint[1].z = -3.02;
+			vPoint[2] = vPoint[1];
+			vPoint[2].x += sin(PI / 2 - theta);
+			vPoint[2].z -= cos(PI / 2 - theta);
+		}
+		else{
+			vPoint[1].x = 4.52f;
+			vPoint[1].z = currentpos.z + (4.52 - currentpos.x) * tan(theta);
+			vPoint[2] = vPoint[1];
+			vPoint[2].x -= cos(theta);
+			vPoint[2].z += sin(theta);
+		}
+	}
+
+	for (int i = 0; i < 3; ++i)
+	{
+		D3DXVec3TransformCoord(&vViewPoint[i], &vPoint[i], &g_mView);
+		if (vViewPoint[i].z < 1e-5f)
+			vViewPoint[i].z = 1e-5f;
+	}
+
+	vLine[0] = vViewPoint[0];
+	vLine[1] = vViewPoint[1];
+	vLine[2] = vViewPoint[2];
+	pdxline->DrawTransform(vLine, 3, &g_mProj, 0xfffffffa);
+	pdxline->End();
+}
+
+
 
 // timeDelta represents the time between the current image frame and the last image frame.
 // the distance of moving balls should be "velocity * timeDelta"
@@ -933,11 +1047,9 @@ bool Display(float timeDelta)
 	//		Player2[0].Print("Player2 : ", 650, 540, d3d::WHITE);
 	//		Player2[1].Print("MUTE", 650, 540, d3d::WHITE);
 
-			IDirect3DDevice9* g_pd3dDevice;
-			//ID3DXLine* g_pLine;
-			//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
-			//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
-			//D3DXVECTOR3 lines[] = { currentBall->getCenter(), g_target_blueball.getCenter() };
+			if (VK_SPACE_interrupt != true){
+				drawLine_J();
+			}
 
 			Device->EndScene();
 			Device->Present(0, 0, 0, 0);
@@ -995,11 +1107,8 @@ bool Display(float timeDelta)
 
 		Player1[0].Print(user1Name, 75, 75, d3d::BLACK);
 
-		IDirect3DDevice9* g_pd3dDevice;
-		//ID3DXLine* g_pLine;
-		//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
-		//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
-		//D3DXVECTOR3 lines[] = { currentBall->getCenter(), g_target_blueball.getCenter() };
+		if (VK_SPACE_interrupt != true)
+			drawLine_J();
 
 		Device->EndScene();
 		Device->Present(0, 0, 0, 0);
@@ -1045,8 +1154,6 @@ bool Display(float timeDelta)
 		g_target_blueball.draw(Device, g_mWorld);
 		g_light.draw(Device);
 
-		IDirect3DDevice9* g_pd3dDevice;
-
 		Plane.Draw(Device);
 		char user1Score[10];
 		char user2Score[10];
@@ -1062,10 +1169,8 @@ bool Display(float timeDelta)
 		Player1[0].Print(user1Name, 75, 50, d3d::BLACK);
 		Player2[0].Print(user2Name, 75, 95, d3d::BLACK);
 
-		//ID3DXLine* g_pLine;
-		//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
-		//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
-		//D3DXVECTOR3 lines[] = { currentBall->getCenter(), g_target_blueball.getCenter() };
+		if (VK_SPACE_interrupt != true)
+			drawLine_J();
 
 		Device->EndScene();
 		Device->Present(0, 0, 0, 0);
@@ -1111,11 +1216,8 @@ bool Display(float timeDelta)
 		g_target_blueball.draw(Device, g_mWorld);
 		g_light.draw(Device);
 
-		IDirect3DDevice9* g_pd3dDevice;
-		//ID3DXLine* g_pLine;
-		//D3DXCreateLine(g_pd3dDevice, &g_pLine); // Line 생성
-		//g_pLine->SetWidth(2); // 라인의 굵기를 2로 설정
-		//D3DXVECTOR3 lines[] = { currentBall->getCenter(), g_target_blueball.getCenter() };
+		if (VK_SPACE_interrupt != true)
+			drawLine_J();
 
 		Plane.Draw(Device);
 		char user1Score[10];
@@ -1284,6 +1386,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			bool isTurnChange = true;
 			bool isGameEnd = false;
 			bool hasCollided[4];
+			VK_SPACE_interrupt = false;
 			for (int i = 0; i < 4; i++) {
 				hasCollided[i] = currentBall->getHasCollided(i);
 			}
@@ -1398,8 +1501,10 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					
 					break;
 				}
+				
 				break;
 			}
+
 		}
 
 
